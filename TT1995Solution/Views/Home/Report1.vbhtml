@@ -3,7 +3,7 @@
 End Code
 
 <div>
-    <h4>กรมการขนส่ง<br />แบบคำขออื่นๆ</h4>
+    <h4>กรมการขนส่ง แบบคำขออื่นๆ</h4>
 </div>
 <div class="row">
     <div class="col-12">
@@ -18,6 +18,9 @@ End Code
     <div id="popup"></div>
 </div>
 <style>
+    .dx-datagrid .dx-link {
+        color: #343a40;
+    }
     #view_form1 input {
         border:none;
         border-bottom: 1px solid #808080;
@@ -335,6 +338,7 @@ End Code
                                 <table border="0" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td style="border-top: 1px solid; border-right: 1px solid; border-left: 1px solid; padding: 5px;">
+                                            <input type="hidden" id="txt0" />
                                             คำขอที่ <input type="text" id="txt1" style="width: 120px;">
                                         </td>
                                     </tr>
@@ -459,7 +463,7 @@ End Code
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: center;">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button type="button" id="btnUpdateForm1" class="btn btn-success">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>

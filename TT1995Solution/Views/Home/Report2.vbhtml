@@ -18,6 +18,10 @@ End Code
     <div id="popup"></div>
 </div>
 <style>
+    .dx-datagrid .dx-link {
+        color: #343a40;
+    }
+
     #view_form2 input {
         border: none;
         border-bottom: 1px solid #808080;
@@ -194,7 +198,7 @@ End Code
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: center;">
-                <button type="button" class="btn btn-success">Save</button>
+                <button type="button" id="btnSaveForm2" class="btn btn-success">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -404,6 +408,7 @@ End Code
                         </tr>
                         <tr>
                             <td align="right" style="padding-top: 5px;">
+                                <input type="hidden" id="txt0" />
                                 เขียนที่ <input type="text" id="txt1">
                             </td>
                         </tr>
@@ -549,6 +554,7 @@ End Code
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-success" id="btnUpdateForm2">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>

@@ -3037,6 +3037,7 @@
     <Content Include="scripts\Home\officer_records.js" />
     <Content Include="scripts\Home\passport.js" />
     <Content Include="scripts\Home\proInsCom.js" />
+    <Content Include="scripts\Home\report3.js" />
     <Content Include="scripts\Home\tax.js" />
     <Content Include="scripts\Home\Trackingwork.js" />
     <Content Include="scripts\Manage\lookup.js" />
@@ -3284,6 +3285,8 @@
     <Content Include="Views\Home\driving_license_natural_gas_transportation.vbhtml" />
     <Content Include="Views\Home\driving_license_oil_transportation.vbhtml" />
     <Content Include="Views\Home\license_car_factory.vbhtml" />
+    <Content Include="Views\Home\Report3.vbhtml" />
+    <Content Include="Views\Home\form3.vbhtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

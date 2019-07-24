@@ -11,7 +11,7 @@ Namespace Controllers
         Function Index() As ActionResult
             If Session("StatusLogin") = "1" Then
                 SetDataOfConfigColumnData()
-                Return View("../Home/Index")
+                Return View("../Home/Report3")
             Else
                 Return View("../Account/Login")
             End If
