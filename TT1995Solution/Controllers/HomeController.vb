@@ -132,7 +132,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Dim TbLicense() As Object = {number_car, license_car, province, type_fuel, type_car, style_car, brand_car, model_car, color_car, number_body, number_engine, number_engine_point_1, number_engine_point_2, brand_engine, pump, horse_power, shaft, wheel, tire, license_date, weight_car, weight_lade, weight_total, ownership, transport_operator, transport_type, seq, nationality, id_card, address, license_expiration, possessory_right, license_no, license_status, fleet, license_location, internal_call}
             For n As Integer = 0 To TbLicense.Length - 1
                 If Not TbLicense(n) Is Nothing Then
-                    _SQL &= StrTbLicense(n) & "=N'" & TbLicense(n).Insert(TbLicense(n).IndexOf("'") + 1, "'") & "',"
+                    _SQL &= StrTbLicense(n) & "=N'" & IIf(TbLicense(n).IndexOf("'") >= 0, TbLicense(n).Insert(TbLicense(n).IndexOf("'") + 1, "'"), TbLicense(n)) & "',"
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE license_id = " & key
