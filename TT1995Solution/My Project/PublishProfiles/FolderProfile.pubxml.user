@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>F:\TT1995\Tabien\Code\TT1995Solution\TT1995Solution\bin\Release\Publish</_PublishTargetUrl>
+    <_PublishTargetUrl>F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\bin\Release\Publish</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
