@@ -178,7 +178,7 @@ var show_column = [
 
                 $('<i class="fas fa-print ml-2" title="Print"></i>').addClass('dx-link')
                     .on('dxclick', function (e) {
-                        // print();
+                        print_pdf(options.value);
                     }).appendTo(container);
 
                 $('<i class="fas fa-pen ml-2" title="Edit"></i>').addClass('dx-link')
@@ -417,6 +417,12 @@ function delete_form(id) {
             }
         });
     }
+}
+
+// ปริ้น
+function print_pdf(id) {
+
+    window.open('http://43.254.133.49:8015/TTApi/Report/ExportWorkSheet?id=' + id + '&name_report=Report1', '_blank');
 }
 
 function show_popup_view(e, title, options, id) {
