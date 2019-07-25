@@ -14,6 +14,7 @@ var dataGridFull;
 var dataLookupFilter;
 var gbTableId = '30';
 var fileOpen;
+var tableName = 'license_factory';
 
 $(function () {
     $("a:contains('เข้าโรงงาน')").addClass("active");
@@ -370,6 +371,24 @@ $(function () {
             data[2].allowEditing = false;
             //_dataSource = data[0].lookup.dataSource;
             //ตัวแปร data โชว์ Column และตั้งค่า Column ไหนที่เอามาโชว์บ้าง
+
+            $.ajax({
+                type: "POST",
+                url: "../Home/GetDriverNameJoinTable",
+                contentType: "application/json; charset=utf-8",
+                data: "{TableName: '" + tableName + "'}",
+                dataType: "json",
+                async: false,
+                success: function (dataLookup) {
+                    data_lookup_number_car = dataLookup;
+                    data[0].lookup = {
+                        dataSource: dataLookup,
+                        displayExpr: "driver_name",
+                        valueExpr: "driver_id"
+                    }
+                }
+            });
+
             dataGrid.option('columns', data);
         },
         error: function (error) {
@@ -540,5 +559,26 @@ $(function () {
     //        }
     //    });
     //});
+
+    $(document).on("dxclick", ".dx-datagrid-addrow-button", function () {
+        var data = $.ajax({
+            type: "POST",
+            url: "../Home/GetDriverFull",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (dataLookup) {
+                data_lookup_number_car = dataLookup;
+            }
+        }).responseJSON;
+
+        var arr = {
+            dataSource: data,
+            displayExpr: "driver_name",
+            valueExpr: "driver_id"
+        }
+        console.log(arr);
+        dataGrid.option('columns[0].lookup', arr);
+    });
 
 });

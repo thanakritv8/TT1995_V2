@@ -1,4 +1,5 @@
 ﻿$(function () {
+    var tableName = 'Driver';
     $("a:contains('พขร')").addClass("active");
     var dataGrid = $("#gridContainer").dxDataGrid({
         searchPanel: {
@@ -153,7 +154,31 @@
 
                 }
             });
+            $.ajax({
+                type: "POST",
+                url: "../Home/GetDriverNameJoinTable",
+                contentType: "application/json; charset=utf-8",
+                data: "{TableName: '" + tableName + "'}",
+                dataType: "json",
+                async: false,
+                success: function (dataLookup) {
+                    data_lookup_number_car = dataLookup;
+                    data[4].lookup = {
+                        dataSource: dataLookup,
+                        displayExpr: "driver_name",
+                        valueExpr: "driver_id"
+                    }
 
+                    data[5].lookup = {
+                        dataSource: dataLookup,
+                        displayExpr: "driver_name",
+                        valueExpr: "driver_id"
+                    }
+
+                }
+            });
+            console.log(data);
+            //_dataSource = data[4].lookup.dataSource;
             //console.log(data);
             dataGrid.option('columns', data);
         },
@@ -304,4 +329,26 @@
     function parseJsonDate(jsonDateString) {
         return new Date(parseInt(jsonDateString.replace('/Date(', '')));
     }
+
+    $(document).on("dxclick", ".dx-datagrid-addrow-button", function () {
+        var data = $.ajax({
+            type: "POST",
+            url: "../Home/GetDriverFull",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (dataLookup) {
+                data_lookup_number_car = dataLookup;
+            }
+        }).responseJSON;
+
+        var arr = {
+            dataSource: data,
+            displayExpr: "driver_name",
+            valueExpr: "driver_id"
+        }
+        console.log(arr);
+        dataGrid.option('columns[4].lookup', arr);
+        dataGrid.option('columns[5].lookup', arr);
+    });
 })

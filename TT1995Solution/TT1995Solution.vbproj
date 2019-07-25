@@ -1577,6 +1577,8 @@
     <Content Include="scripts\Account\setting.js" />
     <Content Include="scripts\Account\group.js" />
     <Content Include="scripts\Account\login.js" />
+    <Content Include="scripts\driver.js" />
+    <Content Include="scripts\driver_profile.js" />
     <Content Include="scripts\dx\dx.all.js" />
     <Content Include="scripts\Home\Accident.js" />
     <Content Include="scripts\Home\actInsCom.js" />
@@ -1586,6 +1588,7 @@
     <Content Include="scripts\Home\dashboard.js" />
     <Content Include="scripts\Home\domProIns.js" />
     <Content Include="scripts\Home\driver.js" />
+    <Content Include="scripts\Home\driver_profile.js" />
     <Content Include="scripts\Home\driving_license.js" />
     <Content Include="scripts\Home\driving_license_dangerous_objects_transportation.js" />
     <Content Include="scripts\Home\driving_license_natural_gas_transportation.js" />
@@ -1610,6 +1613,7 @@
     <Content Include="scripts\Home\proInsCom.js" />
     <Content Include="scripts\Home\tax.js" />
     <Content Include="scripts\Home\Trackingwork.js" />
+    <Content Include="scripts\license_factory.js" />
     <Content Include="scripts\Manage\lookup.js" />
     <Content Include="scripts\sb-admin.min.js" />
     <Content Include="Web.config">
@@ -1780,6 +1784,7 @@
     <Content Include="Views\Home\driving_license_natural_gas_transportation.vbhtml" />
     <Content Include="Views\Home\driving_license_oil_transportation.vbhtml" />
     <Content Include="Views\Home\license_car_factory.vbhtml" />
+    <Content Include="Views\Home\driver_profile.vbhtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -97,13 +97,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/23/2019 00:21:27</publishTime>
     </File>
     <File Include="bin/TT1995Solution.dll">
-      <publishTime>07/25/2019 07:31:48</publishTime>
+      <publishTime>07/25/2019 22:46:45</publishTime>
     </File>
     <File Include="bin/TT1995Solution.pdb">
-      <publishTime>07/25/2019 07:31:48</publishTime>
+      <publishTime>07/25/2019 22:46:45</publishTime>
     </File>
     <File Include="bin/TT1995Solution.xml">
-      <publishTime>07/25/2019 07:31:48</publishTime>
+      <publishTime>07/25/2019 22:46:45</publishTime>
     </File>
     <File Include="Content/bootstrap.css">
       <publishTime>07/24/2019 18:59:07</publishTime>
@@ -4593,6 +4593,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="scripts/Account/setting.js">
       <publishTime>06/23/2019 00:21:27</publishTime>
     </File>
+    <File Include="scripts/driver.js">
+      <publishTime>07/25/2019 22:44:21</publishTime>
+    </File>
+    <File Include="scripts/driver_profile.js">
+      <publishTime>07/25/2019 22:44:21</publishTime>
+    </File>
     <File Include="scripts/dx/dx.all.js">
       <publishTime>06/23/2019 00:21:27</publishTime>
     </File>
@@ -4618,7 +4624,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/24/2019 18:09:39</publishTime>
     </File>
     <File Include="scripts/Home/driver.js">
-      <publishTime>06/23/2019 00:21:27</publishTime>
+      <publishTime>07/25/2019 22:46:10</publishTime>
+    </File>
+    <File Include="scripts/Home/driver_profile.js">
+      <publishTime>07/25/2019 22:46:07</publishTime>
     </File>
     <File Include="scripts/Home/driving_license.js">
       <publishTime>07/24/2019 18:11:34</publishTime>
@@ -4666,7 +4675,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/24/2019 19:02:10</publishTime>
     </File>
     <File Include="scripts/Home/license_factory.js">
-      <publishTime>06/23/2019 00:21:27</publishTime>
+      <publishTime>07/25/2019 22:46:10</publishTime>
     </File>
     <File Include="scripts/Home/license_mekong_river.js">
       <publishTime>07/24/2019 18:33:34</publishTime>
@@ -4691,6 +4700,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="scripts/Home/Trackingwork.js">
       <publishTime>06/23/2019 00:21:27</publishTime>
+    </File>
+    <File Include="scripts/license_factory.js">
+      <publishTime>07/25/2019 22:44:21</publishTime>
     </File>
     <File Include="scripts/Manage/lookup.js">
       <publishTime>06/23/2019 00:21:27</publishTime>
@@ -4739,6 +4751,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/Home/Driver.vbhtml">
       <publishTime>07/24/2019 18:04:57</publishTime>
+    </File>
+    <File Include="Views/Home/driver_profile.vbhtml">
+      <publishTime>07/25/2019 22:43:07</publishTime>
     </File>
     <File Include="Views/Home/driving_license.vbhtml">
       <publishTime>07/24/2019 18:07:29</publishTime>
@@ -4816,7 +4831,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/23/2019 00:21:25</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.vbhtml">
-      <publishTime>07/24/2019 19:01:16</publishTime>
+      <publishTime>07/25/2019 22:43:39</publishTime>
     </File>
     <File Include="Views/web.config">
       <publishTime>06/23/2019 00:21:25</publishTime>

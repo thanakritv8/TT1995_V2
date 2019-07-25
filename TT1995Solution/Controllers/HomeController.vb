@@ -3880,6 +3880,212 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
+        Public Function DeletePAS(ByVal keyId As String) As String
+            Dim DtJson As DataTable = New DataTable
+            DtJson.Columns.Add("Status")
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _SQL As String = "DELETE [passport] WHERE pas_id = " & keyId
+            If objDB.ExecuteSQL(_SQL, cn) Then
+                DtJson.Rows.Add("1")
+            Else
+                DtJson.Rows.Add("0")
+            End If
+            objDB.DisconnectDB(cn)
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function InsertFilePAS() As String
+            Dim DtJson As DataTable = New DataTable
+            DtJson.Columns.Add("Status")
+            Try
+                Dim fk_id As String = String.Empty
+                Dim newFile As String = String.Empty
+
+                If Request.Form.AllKeys.Length <> 0 Then
+                    For i As Integer = 0 To Request.Form.AllKeys.Length - 1
+                        If Request.Form.AllKeys(i) = "fk_id" Then
+                            fk_id = Request.Form(i)
+                        End If
+                    Next
+                    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+                    If Request.Files.Count <> 0 Then
+
+                        Dim pathServer As String = Server.MapPath("~/Files/LF/" & fk_id)
+                        If (Not System.IO.Directory.Exists(pathServer)) Then
+                            System.IO.Directory.CreateDirectory(pathServer)
+                        End If
+                        Dim fileName As String = String.Empty
+                        For i As Integer = 0 To Request.Files.Count - 1
+                            Dim file = Request.Files(i)
+                            fileName = file.FileName
+                            file.SaveAs(pathServer & "/" & fileName)
+                            Dim _SQL As String = "UPDATE passport SET path = N'../Files/LF/" & fk_id & "/" & file.FileName & "' WHERE pas_id = " & fk_id
+                            objDB.ExecuteSQL(_SQL, cn)
+                        Next
+
+                        DtJson.Rows.Add("../Files/LF/" & fk_id & "/" & fileName)
+                    Else
+                        DtJson.Rows.Add("0")
+                    End If
+
+                    objDB.DisconnectDB(cn)
+
+                Else
+                    DtJson.Rows.Add("0")
+                End If
+            Catch ex As Exception
+                DtJson.Rows.Add("0")
+            End Try
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function group_update_(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String)
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _Sql As String = "select group_update from " & TableName & " where " & NameColumnId & " = '" & id & "'"
+            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
+
+            If IsDBNull(Dt.Rows(0).Item("group_update")) Then
+                Return 0
+            End If
+
+            If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance")) Then
+                Return cowrie_update(TableName, Dt.Rows(0).Item("group_update"), NameColumnId)
+            End If
+
+            If (Not IsDBNull(Dt.Rows(0).Item("group_update"))) Then
+                _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where group_update = '" & Dt.Rows(0).Item("group_update") & "'"
+                If objDB.ExecuteSQL(_Sql, cn) Then
+                    Return 1
+                Else
+                    Return 0
+                End If
+            Else
+                Return 1
+            End If
+
+        End Function
+
+        Public Function cowrie_update(ByVal TableName As String, ByVal group_update As String, ByVal NameColumnId As String)
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _Sql As String = "select * from " & TableName & " where group_update =N'" & group_update & "'"
+            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
+            For i As Integer = 0 To Dt.Rows.Count - 1
+                _Sql = "UPDATE " & TableName & " SET current_cowrie = 0,previous_cowrie = " & Dt.Rows(i).Item("current_cowrie") & "  where " & NameColumnId & " = '" & Dt.Rows(i).Item(NameColumnId) & "'"
+                If objDB.ExecuteSQL(_Sql, cn) Then
+
+                Else
+                    Return 0
+                End If
+            Next
+            Return 1
+        End Function
+
+        Public Function GetTabianNameJoinTable(ByVal TableName As String) As String
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _SQL As String = "select distinct li.license_id, li.number_car, li.license_car from license as li join " & TableName & " on li.license_id = " & TableName & ".license_id"
+            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
+            objDB.DisconnectDB(cn)
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function GetTabianFull() As String
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _SQL As String = "SELECT [license_id],[number_car],[license_car] FROM [TT1995].[dbo].[license]"
+            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
+            objDB.DisconnectDB(cn)
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function GenSqlForFleet(filter)
+            Dim StrSplit As String() = filter.Split(",")
+            Dim StrIn As String = ""
+            Dim IsNull As String = ""
+            For i As Integer = 0 To StrSplit.Length - 1
+                If (StrSplit(i) = "NULL") Then
+                    IsNull = "li.fleet is null"
+                Else
+                    If (StrIn = "") Then
+                        StrIn = "li.fleet in (N'" & StrSplit(i) & "'"
+                    Else
+                        StrIn = StrIn & ",N'" & StrSplit(i) & "'"
+                    End If
+                End If
+            Next
+            If (StrIn <> "") Then
+                StrIn = StrIn & ") "
+            End If
+
+            If (StrIn <> "") And (IsNull <> "") Then
+                IsNull = " or " & IsNull
+            End If
+
+            Return "(" & StrIn & " " & IsNull & ")"
+        End Function
+
+        Public Function GenSqlForStatus(filter, TableSelectIn)
+            Dim StrSplit As String() = filter.Split(",")
+            Dim StrIn As String = ""
+            Dim IsNull As String = ""
+            For i As Integer = 0 To StrSplit.Length - 1
+                If (StrSplit(i) = "NULL") Then
+                    IsNull = TableSelectIn & " is null"
+                Else
+                    If (StrIn = "") Then
+                        StrIn = TableSelectIn & " in (N'" & StrSplit(i) & "'"
+                    Else
+                        StrIn = StrIn & ",N'" & StrSplit(i) & "'"
+                    End If
+                End If
+            Next
+            If (StrIn <> "") Then
+                StrIn = StrIn & ") "
+            End If
+
+            If (StrIn <> "") And (IsNull <> "") Then
+                IsNull = " or " & IsNull
+            End If
+
+            Return "(" & StrIn & " " & IsNull & ")"
+        End Function
+
+        Public Function FindTable(ByVal SubTable As String) As String
+            If (SubTable = "tax_qty") Then
+                Return "tax"
+            ElseIf (SubTable = "ai_qty") Then
+                Return "act_insurance"
+            Else
+                Return "main_insurance"
+            End If
+        End Function
+
+        Public Function FindColumnName(ByVal SubTable As String) As String
+            If (SubTable = "tax_qty") Then
+                Return "tax_status"
+            ElseIf (SubTable = "ai_qty") Then
+                Return "status"
+            Else
+                Return "status"
+            End If
+        End Function
+
+        Public Function GetDriverNameJoinTable(ByVal TableName As String) As String
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _SQL As String = "  select distinct d.driver_id, d.driver_name from driver as d join " & TableName & " on d.driver_id = " & TableName & ".driver_id"
+            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
+            objDB.DisconnectDB(cn)
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function GetDriverFull() As String
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _SQL As String = "  select distinct d.driver_id, d.driver_name from driver as d where d.driver_name is not null and d.driver_name <> ''"
+            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
+            objDB.DisconnectDB(cn)
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+#End Region
+
 #Region "Driving Llicense Oil Ttransportation"
         Function driving_license_oil_transportation() As ActionResult
             If Session("StatusLogin") = "1" Then
@@ -4435,212 +4641,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 DtJson.Rows.Add("0")
             End Try
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-#End Region
-
-        Public Function DeletePAS(ByVal keyId As String) As String
-            Dim DtJson As DataTable = New DataTable
-            DtJson.Columns.Add("Status")
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "DELETE [passport] WHERE pas_id = " & keyId
-            If objDB.ExecuteSQL(_SQL, cn) Then
-                DtJson.Rows.Add("1")
-            Else
-                DtJson.Rows.Add("0")
-            End If
-            objDB.DisconnectDB(cn)
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function InsertFilePAS() As String
-            Dim DtJson As DataTable = New DataTable
-            DtJson.Columns.Add("Status")
-            Try
-                Dim fk_id As String = String.Empty
-                Dim newFile As String = String.Empty
-
-                If Request.Form.AllKeys.Length <> 0 Then
-                    For i As Integer = 0 To Request.Form.AllKeys.Length - 1
-                        If Request.Form.AllKeys(i) = "fk_id" Then
-                            fk_id = Request.Form(i)
-                        End If
-                    Next
-                    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-                    If Request.Files.Count <> 0 Then
-
-                        Dim pathServer As String = Server.MapPath("~/Files/LF/" & fk_id)
-                        If (Not System.IO.Directory.Exists(pathServer)) Then
-                            System.IO.Directory.CreateDirectory(pathServer)
-                        End If
-                        Dim fileName As String = String.Empty
-                        For i As Integer = 0 To Request.Files.Count - 1
-                            Dim file = Request.Files(i)
-                            fileName = file.FileName
-                            file.SaveAs(pathServer & "/" & fileName)
-                            Dim _SQL As String = "UPDATE passport SET path = N'../Files/LF/" & fk_id & "/" & file.FileName & "' WHERE pas_id = " & fk_id
-                            objDB.ExecuteSQL(_SQL, cn)
-                        Next
-
-                        DtJson.Rows.Add("../Files/LF/" & fk_id & "/" & fileName)
-                    Else
-                        DtJson.Rows.Add("0")
-                    End If
-
-                    objDB.DisconnectDB(cn)
-
-                Else
-                    DtJson.Rows.Add("0")
-                End If
-            Catch ex As Exception
-                DtJson.Rows.Add("0")
-            End Try
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function group_update_(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String)
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _Sql As String = "select group_update from " & TableName & " where " & NameColumnId & " = '" & id & "'"
-            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
-
-            If IsDBNull(Dt.Rows(0).Item("group_update")) Then
-                Return 0
-            End If
-
-            If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance")) Then
-                Return cowrie_update(TableName, Dt.Rows(0).Item("group_update"), NameColumnId)
-            End If
-
-            If (Not IsDBNull(Dt.Rows(0).Item("group_update"))) Then
-                _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where group_update = '" & Dt.Rows(0).Item("group_update") & "'"
-                If objDB.ExecuteSQL(_Sql, cn) Then
-                    Return 1
-                Else
-                    Return 0
-                End If
-            Else
-                Return 1
-            End If
-
-        End Function
-
-        Public Function cowrie_update(ByVal TableName As String, ByVal group_update As String, ByVal NameColumnId As String)
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _Sql As String = "select * from " & TableName & " where group_update =N'" & group_update & "'"
-            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
-            For i As Integer = 0 To Dt.Rows.Count - 1
-                _Sql = "UPDATE " & TableName & " SET current_cowrie = 0,previous_cowrie = " & Dt.Rows(i).Item("current_cowrie") & "  where " & NameColumnId & " = '" & Dt.Rows(i).Item(NameColumnId) & "'"
-                If objDB.ExecuteSQL(_Sql, cn) Then
-
-                Else
-                    Return 0
-                End If
-            Next
-            Return 1
-        End Function
-
-        Public Function GetTabianNameJoinTable(ByVal TableName As String) As String
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "select distinct li.license_id, li.number_car, li.license_car from license as li join " & TableName & " on li.license_id = " & TableName & ".license_id"
-            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
-            objDB.DisconnectDB(cn)
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function GetTabianFull() As String
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT [license_id],[number_car],[license_car] FROM [TT1995].[dbo].[license]"
-            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
-            objDB.DisconnectDB(cn)
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function GenSqlForFleet(filter)
-            Dim StrSplit As String() = filter.Split(",")
-            Dim StrIn As String = ""
-            Dim IsNull As String = ""
-            For i As Integer = 0 To StrSplit.Length - 1
-                If (StrSplit(i) = "NULL") Then
-                    IsNull = "li.fleet is null"
-                Else
-                    If (StrIn = "") Then
-                        StrIn = "li.fleet in (N'" & StrSplit(i) & "'"
-                    Else
-                        StrIn = StrIn & ",N'" & StrSplit(i) & "'"
-                    End If
-                End If
-            Next
-            If (StrIn <> "") Then
-                StrIn = StrIn & ") "
-            End If
-
-            If (StrIn <> "") And (IsNull <> "") Then
-                IsNull = " or " & IsNull
-            End If
-
-            Return "(" & StrIn & " " & IsNull & ")"
-        End Function
-
-        Public Function GenSqlForStatus(filter, TableSelectIn)
-            Dim StrSplit As String() = filter.Split(",")
-            Dim StrIn As String = ""
-            Dim IsNull As String = ""
-            For i As Integer = 0 To StrSplit.Length - 1
-                If (StrSplit(i) = "NULL") Then
-                    IsNull = TableSelectIn & " is null"
-                Else
-                    If (StrIn = "") Then
-                        StrIn = TableSelectIn & " in (N'" & StrSplit(i) & "'"
-                    Else
-                        StrIn = StrIn & ",N'" & StrSplit(i) & "'"
-                    End If
-                End If
-            Next
-            If (StrIn <> "") Then
-                StrIn = StrIn & ") "
-            End If
-
-            If (StrIn <> "") And (IsNull <> "") Then
-                IsNull = " or " & IsNull
-            End If
-
-            Return "(" & StrIn & " " & IsNull & ")"
-        End Function
-
-        Public Function FindTable(ByVal SubTable As String) As String
-            If (SubTable = "tax_qty") Then
-                Return "tax"
-            ElseIf (SubTable = "ai_qty") Then
-                Return "act_insurance"
-            Else
-                Return "main_insurance"
-            End If
-        End Function
-
-        Public Function FindColumnName(ByVal SubTable As String) As String
-            If (SubTable = "tax_qty") Then
-                Return "tax_status"
-            ElseIf (SubTable = "ai_qty") Then
-                Return "status"
-            Else
-                Return "status"
-            End If
-        End Function
-
-        Public Function GetDriverNameJoinTable(ByVal TableName As String) As String
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "  select distinct d.driver_id, d.driver_name from driver as d join " & TableName & " on d.driver_id = " & TableName & ".driver_id"
-            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
-            objDB.DisconnectDB(cn)
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function GetDriverFull() As String
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "  select distinct d.driver_id, d.driver_name from driver as d where d.driver_name is not null and d.driver_name <> ''"
-            Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
-            objDB.DisconnectDB(cn)
-            Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
 #End Region

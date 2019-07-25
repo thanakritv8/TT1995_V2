@@ -103,7 +103,7 @@ End if
                 <span Class="text-light"> พขร</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
-
+                @If Session("37") <> 0 Then@<a Class="dropdown-item" href="../Home/driver_profile">โปรไฟล์ พขร</a>End If
                 @If Session("6") <> 0 Then@<a Class="dropdown-item" href="../Home/Driver">พขร</a>End If
                 @If Session("31") <> 0 Then@<a Then Class="dropdown-item" href="../Home/driving_license">บอข</a>End If
                 @If Session("30") <> 0 Then@<a Then Class="dropdown-item" href="../Home/LicenseFactory">บอข. เข้าโรงงาน</a>End If

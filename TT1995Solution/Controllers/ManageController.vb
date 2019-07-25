@@ -54,7 +54,7 @@ Namespace Controllers
 
         Public Function GetColumn() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT column_id, [display], table_id FROM config_column where name_column not like '%id' AND name_column not like '%date'"
+            Dim _SQL As String = "SELECT column_id, [display], table_id FROM config_column where (name_column not like '%id' AND name_column not like '%date') or name_column = 'group_update'"
             Dim DtColumn As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtColumn.Rows Select DtColumn.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
