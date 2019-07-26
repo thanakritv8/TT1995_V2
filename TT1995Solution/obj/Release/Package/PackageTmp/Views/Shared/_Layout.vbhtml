@@ -187,6 +187,20 @@ End IF
         </li>
 
     End If
+    @If True Then
+        @<li Class="nav-item dropdown">
+            <a Class="nav-link dropdown-toggle  d6" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i Class="fas fa-fw fa-folder"></i>
+                <span Class="text-light"> Document</span>
+            </a>
+            <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
+                @If True Then@<a Then Class="dropdown-item" href="../Home/Report1">แบบคำขออื่นๆ</a>End If
+                @If True Then@<a Then Class="dropdown-item" href="../Home/Report2">หนังสือมอบอำนาจ</a>End If
+                @If True Then@<a Then Class="dropdown-item" href="../Home/Report3">บันทึกถ้อยคำ</a>End If
+            </div>
+        </li>
+
+    End If
     @If Session("GroupId") = "1" Or Session("GroupId") = "3" Then
         @<li Class="nav-item dropdown">
             <a Class="nav-link dropdown-toggle d10" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

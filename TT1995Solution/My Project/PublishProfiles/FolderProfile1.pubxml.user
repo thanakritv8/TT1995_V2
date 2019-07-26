@@ -97,13 +97,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/23/2019 00:21:27</publishTime>
     </File>
     <File Include="bin/TT1995Solution.dll">
-      <publishTime>07/26/2019 13:54:31</publishTime>
+      <publishTime>07/26/2019 14:31:18</publishTime>
     </File>
     <File Include="bin/TT1995Solution.pdb">
-      <publishTime>07/26/2019 13:54:31</publishTime>
+      <publishTime>07/26/2019 14:31:18</publishTime>
     </File>
     <File Include="bin/TT1995Solution.xml">
-      <publishTime>07/26/2019 13:54:31</publishTime>
+      <publishTime>07/26/2019 14:31:18</publishTime>
     </File>
     <File Include="Content/bootstrap.css">
       <publishTime>07/24/2019 18:59:07</publishTime>
@@ -4566,6 +4566,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Img/folder.png">
       <publishTime>06/23/2019 00:21:25</publishTime>
     </File>
+    <File Include="Img/header_f1.png">
+      <publishTime>07/25/2019 21:39:21</publishTime>
+    </File>
     <File Include="Img/pdf.png">
       <publishTime>06/23/2019 00:21:25</publishTime>
     </File>
@@ -4864,7 +4867,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/23/2019 00:21:25</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.vbhtml">
-      <publishTime>07/25/2019 22:43:39</publishTime>
+      <publishTime>07/26/2019 14:16:09</publishTime>
     </File>
     <File Include="Views/web.config">
       <publishTime>06/23/2019 00:21:25</publishTime>
@@ -4873,7 +4876,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/23/2019 00:21:25</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/24/2019 20:03:05</publishTime>
+      <publishTime>07/26/2019 14:31:32</publishTime>
     </File>
   </ItemGroup>
 </Project>
