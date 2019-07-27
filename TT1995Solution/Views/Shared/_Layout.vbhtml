@@ -28,19 +28,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
     <script src="~/Content/js/bootstrap-datepicker.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
     <style>
         .bg-custom {
-            background-color: rgb(0,128,0);
-            /*background-color: #1a52c6;*/
+            box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
+        }
+        #wrapper .nav-link .fa, #wrapper .nav-item .fas {
+            color: #fff;
+            margin-right: 10px;
+            width: 15px;
+        }
+        .dx-toolbar {
+            background-color: #f8f9fc;
         }
     </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand navbar-dark bg-custom static-top">
+<body style="font-family: 'Kanit', sans-serif;">
+    <nav class="navbar navbar-expand navbar-light bg-custom static-top">
         
         @*<a Class="navbar-brand mr-1" href="~/Home/Index">Three Trans (1995)</a>*@
         <a href="~/Home/Index"><img src="~/Img/tt.png" class="rounded-circle" height="50" width="50" /></a>
-        <H4 class="navbar-nav mr-auto text-white">&nbsp;&nbsp;&nbsp;Tabien Management System</H4>
+        <H4 class="navbar-nav mr-auto ml-2">Tabien System</H4>
         @*<a class="navbar-brand mr-1 text-muted" href="~/Home/Index">Document Management System</a>*@
         @If Session("StatusLogin") = "1" Then
             @<ul Class="navbar-nav ml">
@@ -65,12 +73,12 @@
     </nav>
     <div id="wrapper">
         @If Session("StatusLogin") = "1" Then
-        @<ul Class="sidebar navbar-nav" style="background-color:rgb(34,139,34)">
+        @<ul Class="sidebar navbar-nav" style="background-color: #00c43e; padding-top: 5px;">
     @*0,79,162*@ @*34,139,34*@
     <li class="nav-item">
         <a class="nav-link" href="../Home/dashboard">
             <i class="fas fa-tachometer-alt"></i>
-            <span Class="text-light"> Dashboard</span>
+            <span Class="text-light"> แดชบอร์ด</span>
         </a>
     </li>
     <li class="nav-item">
@@ -176,7 +184,7 @@ End IF
         @<li Class="nav-item dropdown">
             <a Class="nav-link dropdown-toggle  d6" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i Class="fas fa-fw fa-folder"></i>
-                <span Class="text-light"> Other</span>
+                <span Class="text-light"> อื่นๆ</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
                 @If Session("9") <> 0 Then@<a Then Class="dropdown-item" href="../Home/Expressway">ทางด่วน</a>End If
@@ -190,8 +198,8 @@ End IF
     @If True Then
         @<li Class="nav-item dropdown">
             <a Class="nav-link dropdown-toggle  d6" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i Class="fas fa-fw fa-folder"></i>
-                <span Class="text-light"> Document</span>
+                <i class="fas fa-file-alt"></i>
+                <span Class="text-light"> เอกสาร</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
                 @If True Then@<a Then Class="dropdown-item" href="../Home/Report1">แบบคำขออื่นๆ</a>End If
@@ -204,8 +212,8 @@ End IF
     @If Session("GroupId") = "1" Or Session("GroupId") = "3" Then
         @<li Class="nav-item dropdown">
             <a Class="nav-link dropdown-toggle d10" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i Class="fas fa-fw fa-folder"></i>
-                <span Class="text-light"> Administrator</span>
+                <i class="fas fa-user-cog"></i>
+                <span Class="text-light"> จัดการบัญชี</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
                 <a Then Class="dropdown-item" href="../Account/Group">Group</a>
@@ -246,12 +254,9 @@ End IF
             @If Session("StatusLogin") = "1" Then
             @<footer Class="sticky-footer">
                 <div Class="container my-auto">
-                    <div Class="copyright text-center my-auto">
-                        <span> Three Trans (1995) Co., Ltd </span><br>
-                        <span>
-                            101/2 ถนนทางหลวงระยองสาย 3191 ต.มาบข่า อ.นิคมพัฒนา จ.ระยอง 21180
-                        </span><br>
-
+                    <div Class="copyright text-center my-auto text-white">
+                        <h5>Three Trans (1995) Co.,Ltd.</h5><hr style="margin-top: 0; margin-bottom: 0.5rem; border-top: 1px solid #fff; width: 50%; margin-left: auto; margin-right: auto;" />
+                        101/2 ถนนทางหลวงระยองสาย 3191 ต.มาบข่า อ.นิคมพัฒนา จ.ระยอง 21180
                     </div>
                 </div>
             </footer>

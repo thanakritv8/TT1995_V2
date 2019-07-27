@@ -24,6 +24,7 @@ body {
   width: 100%;
   padding-top: 1rem;
   padding-bottom: 80px;
+  background-color: #f8f9fc;
 }
 
 body.fixed-nav #content-wrapper {
@@ -191,6 +192,7 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
     text-align: left;
     padding: 1rem;
     width: 225px;
+    letter-spacing: 1px;
   }
   .sidebar .nav-item .nav-link span {
     font-size: 1rem;
@@ -349,13 +351,16 @@ footer.sticky-footer {
   right: 0;
   bottom: 0;
   width: calc(100% - 90px);
-  height: 80px;
-  background-color: #e9ecef;
+  //height: 70px;
+  background-color: #43425D;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 footer.sticky-footer .copyright {
   line-height: 1;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
 }
 
 @media (min-width: 768px) {

@@ -60,9 +60,9 @@ End Code
             <tr>
                 <td align="center" style="padding-top: 25px;">มีความประสงค์แจ้ง</td>
                 <td style="padding-top: 25px;">
-                    <input type="radio" id="txt14" value="แผ่นป้ายทะเบียนรถ"> แผ่นป้ายทะเบียนรถ<br>
-                    <input type="radio" id="txt14" value="หนังสือแสดงการจดทะเบียน"> หนังสือแสดงการจดทะเบียน<br>
-                    <input type="radio" id="txt14" value="เครื่องหมายแสดงการเสียภาษี"> เครื่องหมายแสดงการเสียภาษี
+                    <input type="radio" id="txt14" name="txt14" value="1"> แผ่นป้ายทะเบียนรถ<br>
+                    <input type="radio" id="txt14" name="txt14" value="2"> หนังสือแสดงการจดทะเบียน<br>
+                    <input type="radio" id="txt14" name="txt14" value="3"> เครื่องหมายแสดงการเสียภาษี
                 </td>
             </tr>
             <tr>
