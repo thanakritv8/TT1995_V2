@@ -345,7 +345,7 @@ $(function () {
                 async: false,
                 success: function (dataLookup) {
                     data[0].setCellValue = function (rowData, value) {
-                        
+                        console.log(dataLookup);
                         var dataNew = [];
                         $.each(dataLookup, function () {
                             if (this.driver_id == value) {
