@@ -2139,7 +2139,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetDriverName() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "select driver_id, driver_name, l.number_car, l.license_car from driver as d join license as l on d.license_id_head = l.license_id"
+            Dim _SQL As String = "select dp.driver_id, dp.driver_name, l.number_car, l.license_car from driver_profile as dp inner join driver d on d.driver_id = dp.driver_id join license as l on d.license_id_head = l.license_id"
             Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
@@ -2155,7 +2155,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetLicenseFactory() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "select N'ประวัติ' as history, d.driver_id as driver_name, l.number_car, l.license_car, l.license_id, lf.IdNo, lf.[start_date], lf.[expire_date], lf.name_factory, lf.license_factory_id, lf.license_factory_status, lf.path from license_factory as lf join driver as d on lf.driver_id = d.driver_id join license as l on d.license_id_head = l.license_id"
+            Dim _SQL As String = "select N'ประวัติ' as history, dp.driver_id as driver_name, l.number_car, l.license_car, l.license_id, lf.IdNo, lf.[start_date], lf.[expire_date], lf.name_factory, lf.license_factory_id, lf.license_factory_status, lf.path from license_factory as lf join driver_profile as dp on lf.driver_id = dp.driver_id inner join driver d on d.driver_id = dp.driver_id join license as l on d.license_id_head = l.license_id"
             Dim Dt As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In Dt.Rows Select Dt.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
@@ -2199,7 +2199,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim _SQL As String = "INSERT INTO license_factory ([IdNo],[driver_id],[start_date],[expire_date],[name_factory],[license_factory_status],[create_by_user_id]) OUTPUT Inserted.license_factory_id VALUES "
-            _SQL &= "(N'" & IdNo & "', '" & driver_name & "', '" & start_date & "', '" & expire_date & "', N'" & name_factory & "', N'" & license_factory_status & "', '" & Session("UserId") & "')"
+            _SQL &= "(N'" & IdNo & "', '" & driver_name & "', '" & start_date.ToString("yyyy-MM-dd") & "', '" & expire_date.ToString("yyyy-MM-dd") & "', N'" & name_factory & "', N'" & license_factory_status & "', '" & Session("UserId") & "')"
             If Not driver_name Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
             Else
@@ -5168,7 +5168,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         SELECT  DATENAME(month, bo.business_expire ) as month_expired,
                         bo.business_start as start, 
                         bo.business_expire as expire,
-                        N'ประกอบนอกในประเทศ' as table_name,
+                        N'ประกอบการนอกประเทศ' as table_name,
                         li.number_car, 
                         li.license_car,
                         case 
@@ -5327,6 +5327,7 @@ end fleet
 
         Public Function GetStatusCategoryDriver(ByVal year As String)
             Return GbFn.GetData("
+                
                 select _data2.status2 as status,count(_data2.status2) as qty from (
                                 select _data.*, case 
                                     when _data.status is null then 'NULL'
@@ -5337,34 +5338,41 @@ end fleet
                                 from (
 SELECT  dl.dl_id as id_of_table, 'driving_license' as _table, dl.status as status
 	    FROM [TT1995].[dbo].driving_license dl
-	    where  (dl.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dl.status IS NULL) and year(dl.status) = " & year & "
+		inner join driver_profile dp on dp.driver_id = dl.driver_id
+	    where  (dl.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dl.status IS NULL) and year(dl.status) = 2019
 union
 SELECT  dldot.dldot_id as id_of_table, 'driving_license_dangerous_objects_transportation' as _table, dldot.status as status
 	    FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot
-	    where  (dldot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dldot.status IS NULL) and year(dldot.expire_date) = " & year & "
+		inner join driver_profile dp on dp.driver_id = dldot.driver_id
+	    where  (dldot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dldot.status IS NULL) and year(dldot.expire_date) = 2019
 union
 SELECT  dlngt.dlngt_id as id_of_table, 'driving_license_natural_gas_transportation' as _table, dlngt.status as status
 	    FROM [TT1995].[dbo].driving_license_natural_gas_transportation dlngt
-	    where  (dlngt.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlngt.status IS NULL) and year(dlngt.expire_date) = " & year & "
+		inner join driver_profile dp on dp.driver_id = dlngt.driver_id
+	    where  (dlngt.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlngt.status IS NULL) and year(dlngt.expire_date) = 2019
 union
 SELECT  dlot.dlot_id as id_of_table, 'driving_license_oil_transportation' as _table, dlot.status as status
 	    FROM [TT1995].[dbo].driving_license_oil_transportation dlot
-	    where  (dlot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlot.status IS NULL) and year(dlot.expire_date) = " & year & "
+		inner join driver_profile dp on dp.driver_id = dlot.driver_id
+	    where  (dlot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlot.status IS NULL) and year(dlot.expire_date) = 2019
 union
 SELECT  passport.pas_id as id_of_table, 'passport' as _table, passport.status as status
 	    FROM [TT1995].[dbo].passport
-	    where  (passport.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or passport.status IS NULL) and year(passport.expire_date) = " & year & "
+		inner join driver_profile dp on dp.driver_id = passport.driver_id
+	    where  (passport.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or passport.status IS NULL) and year(passport.expire_date) = 2019
 union
 SELECT  lf.license_factory_id as id_of_table, 'license_factory' as _table, lf.license_factory_status as status
 	    FROM [TT1995].[dbo].license_factory lf
-	    where  (lf.license_factory_status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or lf.license_factory_status IS NULL) and year(lf.expire_date) = " & year & "
+		inner join driver_profile dp on dp.driver_id = lf.driver_id
+	    where  (lf.license_factory_status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or lf.license_factory_status IS NULL) and year(lf.expire_date) = 2019
 
 		) _data ) _data2
 	                                group by _data2.status2
+            
             ")
         End Function
 
-        Public Function GetStackedBarDlDriver(ByVal year As String)
+        Public Function GetStackedBarDlDriver(filter, year)
             Return GbFn.GetData("
                 select  _data.month_expired, 
 		sum(_data.dl_qty) as dl_qty,  
@@ -5378,37 +5386,43 @@ SELECT  lf.license_factory_id as id_of_table, 'license_factory' as _table, lf.li
 SELECT  DATENAME(month, dl.expire_date) as month_expired, COUNT(MONTH(dl.expire_date)) as dl_qty,
  0 as dldot_qty, 0 as dlngt_qty, 0 as dlot_qty, 0 as p_qty, 0 as lf_qty,0 as price
 		  FROM [TT1995].[dbo].driving_license dl 
-		  where (dl.status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(dl.status) = " & year & "
+          inner join driver_profile dp on dp.driver_id = dl.driver_id
+		  where (" & GenSqlForStatus(filter, "dl.status") & ") and year(dl.expire_date) = " & year & "
 		  group by dl.status, DATENAME(month, dl.expire_date)
 union
 SELECT  DATENAME(month, dldot.expire_date) as month_expired, 0 as dl_qty,
  COUNT(MONTH(dldot.expire_date)) as dldot_qty, 0 as dlngt_qty, 0 as dlot_qty, 0 as p_qty, 0 as lf_qty,0 as price
-		  FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot 
-		  where (dldot.status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(dldot.expire_date) = " & year & "
+		  FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot
+          inner join driver_profile dp on dp.driver_id = dldot.driver_id
+		  where (" & GenSqlForStatus(filter, "dldot.status") & ") and year(dldot.expire_date) = " & year & "
 		  group by dldot.status, DATENAME(month, dldot.expire_date)
 union
 SELECT  DATENAME(month, dlngt.expire_date) as month_expired, 0 as dl_qty,
  0 as dldot_qty, COUNT(MONTH(dlngt.expire_date)) as dlngt_qty, 0 as dlot_qty, 0 as p_qty, 0 as lf_qty,0 as price
 		  FROM [TT1995].[dbo].driving_license_natural_gas_transportation dlngt
-		  where (dlngt.status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(dlngt.expire_date) = " & year & "
+          inner join driver_profile dp on dp.driver_id = dlngt.driver_id
+		  where (" & GenSqlForStatus(filter, "dlngt.status") & ") and year(dlngt.expire_date) = " & year & "
 		  group by dlngt.status, DATENAME(month, dlngt.expire_date)
 union
 SELECT  DATENAME(month, dlot.expire_date) as month_expired, 0 as dl_qty,
  0 as dldot_qty, 0 as dlngt_qty, COUNT(MONTH(dlot.expire_date)) as dlot_qty, 0 as p_qty, 0 as lf_qty,0 as price
 		  FROM [TT1995].[dbo].driving_license_oil_transportation dlot
-		  where (dlot.status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(dlot.expire_date) = " & year & "
+          inner join driver_profile dp on dp.driver_id = dlot.driver_id
+		  where (" & GenSqlForStatus(filter, "dlot.status") & ") and year(dlot.expire_date) = " & year & "
 		  group by dlot.status, DATENAME(month, dlot.expire_date)
 union
 SELECT  DATENAME(month, p.expire_date) as month_expired, 0 as dl_qty,
  0 as dldot_qty, 0 as dlngt_qty, 0 as dlot_qty, COUNT(MONTH(p.expire_date)) as p_qty, 0 as lf_qty,0 as price
 		  FROM [TT1995].[dbo].passport p
-		  where (p.status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(p.expire_date) = " & year & "
+          inner join driver_profile dp on dp.driver_id = p.driver_id
+		  where (" & GenSqlForStatus(filter, "p.status") & ") and year(p.expire_date) = " & year & "
 		  group by p.status, DATENAME(month, p.expire_date)
 union
 SELECT  DATENAME(month, lf.expire_date) as month_expired,0 as dl_qty,
  0 as dldot_qty, 0 as dlngt_qty, 0 as dlot_qty, 0 as p_qty,  COUNT(MONTH(lf.expire_date)) as lf_qty, 0 as price
 		  FROM [TT1995].[dbo].license_factory lf 
-		  where (lf.license_factory_status in (N'ยังไม่ได้ดำเนินการ',N'จัดเตรียมเอกสาร',N'ยื่นเอกสาร',N'เสร็จสมบูรณ์',N'ขาดต่อ')) and year(lf.expire_date) = " & year & "
+          inner join driver_profile dp on dp.driver_id = lf.driver_id
+		  where (" & GenSqlForStatus(filter, "lf.license_factory_status") & ") and year(lf.expire_date) = " & year & "
 		  group by lf.license_factory_status, DATENAME(month, lf.expire_date)
 			) _data 
 	group by _data.month_expired
@@ -5427,6 +5441,53 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,0 as dl_qty,
 					end
             ")
 
+        End Function
+
+        Public Function GetDataDetailDlDriverStatus(filter, year)
+            Return GbFn.GetData("
+            
+SELECT  DATENAME(month, dl.expire_date) as month_expired,
+	dp.driver_name,dl.status,dl.start_date,dl.expire_date, 'ใบอนุญาติใบขับขี่' as 'table_name'
+	FROM [TT1995].[dbo].driving_license dl 
+	inner join driver_profile dp on dp.driver_id = dl.driver_id
+	inner join driver d on d.driver_name = dp.driver_id
+	where (" & GenSqlForStatus(filter, "dl.status") & ") and year(dl.expire_date) = " & year & "
+union
+SELECT  DATENAME(month, dldot.expire_date) as month_expired,
+	dp.driver_name,dldot.status,dldot.start_date,dldot.expire_date, 'ใบอนุญาตขับขี่ขนส่งวัตถุอันตราย' as 'table_name'
+	FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot 
+	inner join driver_profile dp on dp.driver_id = dldot.driver_id
+	inner join driver d on d.driver_name = dp.driver_id
+	where (" & GenSqlForStatus(filter, "dldot.status") & ") and year(dldot.expire_date) = " & year & "
+union
+SELECT  DATENAME(month, dlngt.expire_date) as month_expired,
+	dp.driver_name,dlngt.status,dlngt.start_date,dlngt.expire_date, 'ใบอนุญาตขับขี่ขนส่งก๊าสธรรมชาติ' as 'table_name'
+		  FROM [TT1995].[dbo].driving_license_natural_gas_transportation dlngt
+		  inner join driver_profile dp on dp.driver_id = dlngt.driver_id
+		  inner join driver d on d.driver_name = dp.driver_id
+		  where (" & GenSqlForStatus(filter, "dlngt.status") & ") and year(dlngt.expire_date) = " & year & "
+union
+SELECT  DATENAME(month, dlot.expire_date) as month_expired,
+	dp.driver_name,dlot.status,dlot.start_date,dlot.expire_date, 'ใบอนุญาตขับขี่ขนส่งน้ำมัน' as 'table_name'
+		  FROM [TT1995].[dbo].driving_license_oil_transportation dlot
+		  inner join driver_profile dp on dp.driver_id = dlot.driver_id
+		  inner join driver d on d.driver_name = dp.driver_id
+		  where (" & GenSqlForStatus(filter, "dlot.status") & ") and year(dlot.expire_date) = " & year & "
+union
+SELECT  DATENAME(month, p.expire_date) as month_expired,
+	dp.driver_name,p.status,p.start_date,p.expire_date, 'พาสสปอร์ต' as 'table_name'
+		  FROM [TT1995].[dbo].passport p
+		  inner join driver_profile dp on dp.driver_id = p.driver_id
+		  inner join driver d on d.driver_name = dp.driver_id
+		  where (" & GenSqlForStatus(filter, "p.status") & ") and year(p.expire_date) = " & year & "
+union
+SELECT  DATENAME(month, lf.expire_date) as month_expired,
+	dp.driver_name,lf.license_factory_status as 'status',lf.start_date,lf.expire_date, 'ใบอนุญาตโรงงาน' as 'table_name'
+		  FROM [TT1995].[dbo].license_factory lf 
+		  inner join driver_profile dp on dp.driver_id = lf.driver_id
+		  inner join driver d on d.driver_name = dp.driver_id
+		  where (" & GenSqlForStatus(filter, "lf.license_factory_status") & ") and year(lf.expire_date) = " & year & "
+")
         End Function
 #End Region
 
