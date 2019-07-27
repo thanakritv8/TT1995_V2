@@ -11,16 +11,18 @@ $(function () {
     });
     var data_select_fleet = [];
     var data_select_status = [];
+    var data_select_fleet_driver = [];
+    var data_select_status_driver = [];
 
     function parseJsonDate(jsonDateString) {
         return new Date(parseInt(jsonDateString.replace('/Date(', '')));
     }
 
-    function GetDataDetailTabien() {
+    function GetDataDetailTabien(filter) {
         return $.ajax({
             type: "POST",
             url: "../Home/GetDataDetailTabien",
-            data: "{ year:" + "'" + $('#year').val() + "'}",
+            data: "{ filter:'" + filter + "',year:" + "'" + $('#year').val() + "'}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
@@ -36,11 +38,11 @@ $(function () {
         }).responseJSON;
     }
 
-    function GetDataDetailOther() {
+    function GetDataDetailOther(filter) {
         return $.ajax({
             type: "POST",
             url: "../Home/GetDataDetailOther",
-            data: "{ year:" + "'" + $('#year').val() + "'}",
+            data: "{filter:'" + filter + "', year:" + "'" + $('#year').val() + "'}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
@@ -56,9 +58,117 @@ $(function () {
         }).responseJSON;
     }
 
-    var DataDetailTabien = GetDataDetailTabien();
-    var DataDetailOther = GetDataDetailOther();
-    console.log(DataDetailOther);
+    function GetDataDetailFactory(filter) {
+        return $.ajax({
+            type: "POST",
+            url: "../Home/GetDataDetailFactory",
+            data: "{filter:'" + filter + "', year:" + "'" + $('#year').val() + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var d = parseJsonDate(data[i].start);
+                    data[i].start = d;
+
+                    var d = parseJsonDate(data[i].expire);
+                    data[i].expire = d;
+                }
+            }
+        }).responseJSON;
+    }
+
+    function show_popup(title, ChartType, arg1, arg2) {
+        popup_history.option('title', title);
+        popup_history._options.contentTemplate = function (content) {
+            var maxHeight = Math.ceil($("#popup_history .dx-overlay-content").height() - 160);
+            content.append("<div id='gridHistory' style='max-height: " + maxHeight + "px;' ></div>");
+        }
+        $("#popup_history").dxPopup("show");
+        if (ChartType == "car-category") {
+            show_datagrid_car_category(title);
+        } else if (ChartType == "tabien") {
+            show_datagrid_tabien(title, FilterStatusToTabien(arg1, arg2), showColumnOther);
+        } else if (ChartType == "tabienAll") {
+            show_datagrid_tabien(title, DataDetailTabien, showColumnOther);
+        } else if (ChartType == "other") {
+            show_datagrid_tabien(title, FilterStatusToOther(arg1, arg2), showColumnOther);
+        } else if (ChartType == "otherAll") {
+            show_datagrid_tabien(title, DataDetailOther, showColumnOther);
+        } else if (ChartType == "factory") {
+            show_datagrid_tabien(title, FilterStatusToFactory(arg1, arg2), showColumnOther);
+        } else if (ChartType == "factoryAll") {
+            show_datagrid_tabien(title, DataDetailFactory, showColumnOther);
+        } else if (ChartType == "driverFleet") {
+            show_datagrid_tabien(title, FilterFleetToDL(arg1, arg2), showColumnDriverFleet);
+        } else if (ChartType == "driverFleetAll") {
+            show_datagrid_tabien(title, DataDetailDriverFleet, showColumnOther);
+        }
+    }
+
+    function show_datagrid_tabien(title, dataSource,showColumn) {
+        var gridHistory = $("#gridHistory").dxDataGrid({
+            dataSource: dataSource,
+            columns: showColumn,
+            showBorders: true,
+            height: 'auto',
+            scrolling: {
+                mode: "virtual"
+            },
+            export: {
+                enabled: true,
+                fileName: "data",
+            },
+            searchPanel: {
+                visible: true,
+                width: 240,
+                placeholder: "Search..."
+            },
+        }).dxDataGrid('instance');
+    }
+
+    var showColumnOther = [
+        {
+            dataField: "number_car",
+            caption: "เบอร์รถ",
+        },
+        {
+            dataField: "license_car",
+            caption: "ทะเบียน",
+        },
+        {
+            dataField: "status",
+            caption: "สถานะ",
+        },
+        {
+            dataField: "month_expired",
+            caption: "เดือน"
+        },
+        {
+            dataField: "expire",
+            captin: "วันที่"
+        },
+        {
+            dataField: "table_name",
+            caption: "ตาราง",
+        }
+    ];
+
+    var showColumnDriverFleet = [
+        {
+            dataField: "id_no",
+            caption: "เลขที่",
+        },
+        {
+            dataField: "driver_name",
+            caption: "ชื่อ",
+        },
+        {
+            dataField: "table_name",
+            caption: "ใบอนุญาติ",
+        }
+    ];
+    
     //#region First Step
     var base_chart_width = $('#chart-donut-fleet-category').width();
     
@@ -105,7 +215,7 @@ $(function () {
             }
         }],
         onInitialized: function (e) {
-            console.log(chart_donut_fleet_category);
+           // console.log(chart_donut_fleet_category);
         },
         legend: {
             visible: false,
@@ -208,23 +318,7 @@ $(function () {
         title: "test"
     }).dxPopup("instance");
 
-    function show_popup(title, ChartType, arg1, arg2) {
-        popup_history.option('title', title);
-        popup_history._options.contentTemplate = function (content) {
-            var maxHeight = Math.ceil($("#popup_history .dx-overlay-content").height() - 150);
-            content.append("<div id='gridHistory' style='max-height: " + maxHeight + "px;' ></div>");
-        }
-        $("#popup_history").dxPopup("show");
-        if (ChartType == "car-category") {
-            show_datagrid_car_category(title);
-        } else if (ChartType == "tabien") {
-            show_datagrid_tabien(title, FilterStatusToTabien(arg1,arg2));
-        } else if (ChartType == "tabienAll") {
-            show_datagrid_tabien(title, DataDetailTabien);
-        } else if (ChartType == "other") {
-            show_datagrid_tabien(title, FilterStatusToOther(arg1, arg2));
-        }
-    }
+    
 
     function FilterStatusToTabien(table_name,month) {
         var data = [];
@@ -241,6 +335,18 @@ $(function () {
         var data = [];
         $.each(data_select_status, function (key, value) {
             var data_filter = DataDetailOther.filter(function (arr) {
+                return arr.status == value && arr.month_expired == month && arr.table_name == table_name;
+            });
+            data = $.merge(data, data_filter);
+        });
+        console.log(data);
+        return data;
+    }
+
+    function FilterStatusToFactory(table_name, month) {
+        var data = [];
+        $.each(data_select_status, function (key, value) {
+            var data_filter = DataDetailFactory.filter(function (arr) {
                 return arr.status == value && arr.month_expired == month && arr.table_name == table_name;
             });
             data = $.merge(data, data_filter);
@@ -307,52 +413,7 @@ $(function () {
 
 
 
-    function show_datagrid_tabien(title,dataSource) {
-        var gridHistory = $("#gridHistory").dxDataGrid({
-            dataSource: dataSource,
-            columns: [
-                {
-                    dataField: "number_car",
-                    caption: "เบอร์รถ",
-                },
-                {
-                    dataField: "license_car",
-                    caption: "ทะเบียน",
-                },
-                {
-                    dataField: "status",
-                    caption: "สถานะ",
-                },
-                {
-                    dataField: "month_expired",
-                    caption: "เดือน"
-                },
-                {
-                    dataField: "expire",
-                    captin:"วันที่"
-                },
-                {
-                    dataField: "table_name",
-                    caption: "ตาราง",
-                }
-            ]
-            ,
-            showBorders: true,
-            height: 'auto',
-            scrolling: {
-                mode: "virtual"
-            },
-            export: {
-                enabled: true,
-                fileName: "data",
-            },
-            searchPanel: {
-                visible: true,
-                width: 240,
-                placeholder: "Search..."
-            },
-        }).dxDataGrid('instance');
-    }
+    
 
     $("#button-car-category").dxButton({
         text: "Data All",
@@ -439,6 +500,10 @@ $(function () {
             chart_stacked_bar_tabien.option('dataSource', GetStackedBarTabien(data_select_status));
             chart_stacked_bar_other.option('dataSource', GetStackedBarOther(data_select_status));
             chart_stacked_bar_enter_factory.option('dataSource', GetStackedBarEnterFactory(data_select_status));
+            
+            DataDetailTabien = GetDataDetailTabien(data_select_status);
+            DataDetailOther = GetDataDetailOther(data_select_status);
+            DataDetailFactory = GetDataDetailFactory(data_select_status);
         },
 
         tooltip: {
@@ -455,6 +520,10 @@ $(function () {
 
     });
 
+    var DataDetailTabien = GetDataDetailTabien(data_select_status);
+    var DataDetailOther = GetDataDetailOther(data_select_status);
+    var DataDetailFactory = GetDataDetailFactory(data_select_status);
+
     var chart_stacked_bar_tabien = $("#chart_stacked_bar_tabien").dxChart({
         dataSource: GetStackedBarTabien(data_select_status),
         commonSeriesSettings: {
@@ -466,16 +535,16 @@ $(function () {
             width: base_chart_width
         },
         series: [
-            { valueField: "ai_qty", name: "ประกัน พรบ", stack: "1", color: 'green', },
-            { valueField: "mi_qty", name: "ประกันภัยรถยนต์", stack: "1", color: 'red' },
+            { valueField: "ai_qty", name: "ประกัน พรบ", stack: "1", },// color: 'green',
+            { valueField: "mi_qty", name: "ประกันภัยรถยนต์", stack: "1", },//color: 'red'
             {
-                valueField: "tax_qty", name: "ภาษี", stack: "1", color: 'blue', label: {
+                valueField: "tax_qty", name: "ภาษี", stack: "1", label: {//color: 'blue',
                     visible: true,
                     font: {
                         size: '10',
                     },
                     customizeText: function (valueFromNameField) {
-                        console.log(valueFromNameField);
+                        //console.log(valueFromNameField);
                         //var data_filter = book_tabien.filter(function (arr) {
                         //    return arr.month_expired == valueFromNameField.argument;
                         //});
@@ -493,7 +562,7 @@ $(function () {
                 point.select();
             }
 
-            show_popup(e.target._options.name + '(' + e.target.aggument + ')', 'tabien', e.target._options.name, e.target.argument);
+            show_popup(e.target._options.name + '(' + e.target.argument + ')', 'tabien', e.target._options.name, e.target.argument);
             //console.log(e.target._options.name +' , '+ e.target.argument);
             //console.log(e);
             
@@ -571,7 +640,7 @@ $(function () {
                         size: '10',
                     },
                     customizeText: function (valueFromNameField) {
-                        console.log(valueFromNameField);
+                        //console.log(valueFromNameField);
                         //var data_filter = book_tabien.filter(function (arr) {
                         //    return arr.month_expired == valueFromNameField.argument;
                         //});
@@ -589,7 +658,7 @@ $(function () {
                 point.select();
             }
             //var data_chart_select = chart_donut_fleet_category.getAllSeries()[0]._points;
-            show_popup(e.target._options.name + '(' + e.target.aggument + ')', 'other', e.target._options.name, e.target.argument);
+            show_popup(e.target._options.name + '(' + e.target.argument + ')', 'other', e.target._options.name, e.target.argument);
             //console.log(e.target._options.name +' , '+ e.target.argument);
         },
         legend: {
@@ -651,7 +720,7 @@ $(function () {
             width: base_chart_width
         },
         series: [
-            { valueField: "lf_qty", name: "ใบอนุญาตโรงงาน", stack: "1", },
+            //{ valueField: "lf_qty", name: "ใบอนุญาตโรงงาน", stack: "1", },
             {
                 valueField: "lcf_qty", name: "ใบอนุญาตรถเข้าโรงงาน", stack: "1", label: {
                     visible: true,
@@ -676,6 +745,10 @@ $(function () {
             } else {
                 point.select();
             }
+
+            show_popup(e.target._options.name + '(' + e.target.argument + ')', 'factory', e.target._options.name, e.target.argument);
+            //console.log(e.target._options.name +' , '+ e.target.argument);
+            //console.log(e);
             console.log(e);
 
         },
@@ -728,7 +801,7 @@ $(function () {
         // icon: "exportxlsx",
         visible: true,
         onClick: function () {
-            show_popup('Car Category', 'book-other');
+            show_popup('License Other', 'otherAll');
         }
     });
 
@@ -737,13 +810,14 @@ $(function () {
         // icon: "exportxlsx",
         visible: true,
         onClick: function () {
-            show_popup('Car Category', 'book-enter-factory');
+            show_popup('License Factory', 'factoryAll');
         }
     });
 
     //#endregion Second Step
 
     //#region third Step
+
     function GetFleetCategoryDriver() {
         return $.ajax({
             type: "POST",
@@ -754,6 +828,21 @@ $(function () {
             success: function (data) {
             }
         }).responseJSON;
+    }
+
+    function FilterFleetToDL(table_name) {
+        var data = [];
+        $.each(data_select_fleet_driver, function (key, value) {
+            console.log(value);
+            console.log(table_name);
+            var data_filter = DataDetailDriverFleet.filter(function (arr) {
+                return arr.fleet == value && arr.table_name == table_name;
+            });
+            data = $.merge(data, data_filter);
+        });
+        console.log(DataDetailDriverFleet);
+        console.log(data);
+        return data;
     }
 
     var chart_donut_driver_fleet = $("#chart-donut-driver-fleet").dxPieChart({
@@ -782,7 +871,7 @@ $(function () {
             }
         }],
         onInitialized: function (e) {
-            console.log(chart_donut_fleet_category);
+            console.log(chart_donut_driver_fleet);
         },
         legend: {
             visible: false,
@@ -793,15 +882,15 @@ $(function () {
             } else {
                 point.select();
             }
-            var data_chart_select = chart_donut_fleet_category.getAllSeries()[0]._points;
-            data_select_fleet = [];
+            var data_chart_select = chart_donut_driver_fleet.getAllSeries()[0]._points;
+            data_select_fleet_driver = [];
             jQuery.each(data_chart_select, function (i, val) {
                 if (val._currentStyle == 'selection') {
-                    data_select_fleet.push(val.argument);
+                    data_select_fleet_driver.push(val.argument);
                 }
 
             });
-            chart_bar_fleet_category.option('dataSource', FilterFleetToCar(data_select_fleet));
+            chart_bar_dl_category_driver.option('dataSource', GetDlCategoryDriver(data_select_fleet_driver));
         },
 
         tooltip: {
@@ -809,10 +898,32 @@ $(function () {
         }
     }).dxPieChart("instance");
 
-    function GetDlCategoryDriver() {
+    data_select_fleet_driver = [];
+    jQuery.each(chart_donut_driver_fleet.getAllSeries()[0]._points, function (i, val) {
+        if (val._currentStyle == 'selection') {
+            data_select_fleet_driver.push(val.argument);
+        }
+
+    });
+    function GetDataDetailDlDriver(filter) {
+        return $.ajax({
+            type: "POST",
+            url: "../Home/GetDataDetailDlDriver",
+            data: "{ filter:'" + filter + "',year:" + $('#year').val() + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+            }
+        }).responseJSON;
+    }
+    var DataDetailDriverFleet = GetDataDetailDlDriver(data_select_fleet_driver);
+    console.log(DataDetailDriverFleet);
+    function GetDlCategoryDriver(filter) {
         return $.ajax({
             type: "POST",
             url: "../Home/GetDlCategoryDriver",
+            data: "{ filter:'" + filter + "',year:" + $('#year').val() + "}",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
@@ -824,7 +935,7 @@ $(function () {
     var chart_bar_dl_category_driver = $("#chart-bar-dl-category-driver").dxChart({
         rotated: true,
         title: "Driving License Category",
-        dataSource: GetDlCategoryDriver(),
+        dataSource: GetDlCategoryDriver(data_select_fleet_driver),
         size: {
             height: '100%',
             width: base_chart_width
@@ -844,9 +955,11 @@ $(function () {
         legend: {
             visible: false
         },
-        onPointClick: function (info) {
+        onPointClick: function (    info) {
             console.log(info);
-            show_popup(info.target.data.internal_call);
+            show_popup(info.target.argument, 'driverFleet', info.target.argument);
+            //show_popup(e.target._options.name, 'driverFleet', e.target._options.name, e.target.argument);
+            //show_popup(info.target.data.internal_call);
         },
     }).dxChart("instance");
 
@@ -900,21 +1013,31 @@ $(function () {
             } else {
                 point.select();
             }
-            var data_chart_select = chart_donut_fleet_category.getAllSeries()[0]._points;
-            data_select_fleet = [];
+            var data_chart_select = chart_donut_status_category_driver.getAllSeries()[0]._points;
+            data_select_status_driver = [];
             jQuery.each(data_chart_select, function (i, val) {
                 if (val._currentStyle == 'selection') {
-                    data_select_fleet.push(val.argument);
+                    data_select_status_driver.push(val.argument);
                 }
 
             });
-            chart_bar_fleet_category.option('dataSource', FilterFleetToCar(data_select_fleet));
+            chart_bar_fleet_category.option('dataSource', FilterFleetToCar(data_select_status_driver));
         },
 
         tooltip: {
             enabled: true
         }
     }).dxPieChart("instance");
+
+    data_select_status_driver = [];
+    jQuery.each(chart_donut_status_category_driver.getAllSeries()[0]._points, function (i, val) {
+        if (val._currentStyle == 'selection') {
+            data_select_status_driver.push(val.argument);
+        }
+
+    });
+
+    
 
     function GetStackedBarDlDriver() {
         return $.ajax({
@@ -952,7 +1075,7 @@ $(function () {
                         size: '10',
                     },
                     customizeText: function (valueFromNameField) {
-                        console.log(valueFromNameField);
+                        //console.log(valueFromNameField);
                         //var data_filter = book_tabien.filter(function (arr) {
                         //    return arr.month_expired == valueFromNameField.argument;
                         //});
@@ -1029,24 +1152,26 @@ $(function () {
 
     $("#year").change(function () {
         //#region second Step
-
         chart_donut_tabien_status.option('dataSource', GetStatusTabien());
         chart_donut_tabien_status.refresh();
         
         chart_stacked_bar_tabien.option('dataSource', GetStackedBarTabien(data_select_status));
         chart_stacked_bar_tabien.refresh();
 
-        DataDetailTabien = GetDataDetailTabien();
+        
 
         chart_stacked_bar_other.option('dataSource', GetStackedBarOther(data_select_status));
         chart_stacked_bar_other.refresh();
 
-        DataDetailOther = GetDataDetailOther();
+        
 
+        
         chart_stacked_bar_enter_factory.option('dataSource', GetStackedBarEnterFactory(data_select_status));
         chart_stacked_bar_enter_factory.refresh();
 
-        
+        DataDetailTabien = GetDataDetailTabien(data_select_status);
+        DataDetailOther = GetDataDetailOther(data_select_status);
+        DataDetailFactory = GetDataDetailFactory(data_select_status);
 
         //#endregion second Step
 

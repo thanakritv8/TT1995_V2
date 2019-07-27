@@ -226,7 +226,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(fleet Is Nothing, String.Empty, fleet) & "',"
             _SQL &= "N'" & IIf(license_location Is Nothing, String.Empty, license_location) & "',"
             _SQL &= Session("UserId") & ","
-            _SQL &= "N'" & IIf(internal_call Is Nothing, String.Empty, IIf(internal_call.IndexOf("'") >= 0, internal_call.Insert(internal_call.IndexOf("'") + 1, "'"), internal_call)) & "')"
+            _SQL &= "N'" & If(internal_call Is Nothing, String.Empty, IIf(internal_call.IndexOf("'") >= 0, internal_call.Insert(internal_call.IndexOf("'") + 1, "'"), internal_call)) & "')"
 
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
@@ -4683,6 +4683,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return GbFn.GetData("select data_fleet.fleet,COUNT(data_fleet.fleet) as qty from (
                                     select case 
                                     when li.fleet is null then 'NULL'
+                                    when li.fleet = '' then 'NULL'
                                     else li.fleet
                                     end fleet
                                        from license li ) data_fleet
@@ -4693,6 +4694,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return GbFn.GetData("select _data.internal_call,COUNT(_data.internal_call) as qty from (
                                     select case 
                                     when li.internal_call is null then 'NULL'
+                                    when li.internal_call = '' then 'NULL'
                                     else li.internal_call
                                     end internal_call
                                        from license li) _data
@@ -4705,6 +4707,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return GbFn.GetData("select _data.internal_call,COUNT(_data.internal_call) as qty from (
                                     select case 
                                     when li.internal_call is null then 'NULL'
+                                    when li.internal_call = '' then 'NULL'
                                     else li.internal_call
                                     end internal_call
                                        from license li
@@ -4739,6 +4742,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                                 select _data2.status2 as status,count(_data2.status2) as qty from (
                                 select _data.*, case 
                                     when _data.status is null then 'NULL'
+                                    when _data.status = '' then 'NULL'
                                     else _data.status
                                     end status2
 
@@ -4961,6 +4965,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         N'ภาษี' as table_name, li.number_car, li.license_car,
 							case 
                                 when tax.tax_status is null then 'NULL'
+                                when tax.tax_status = '' then 'NULL'
                                 else tax.tax_status
                             end status
 	                        FROM [TT1995].[dbo].[tax] tax 
@@ -4971,6 +4976,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         N'ประกัน พรบ' as table_name, li.number_car, li.license_car,
 							case 
                                 when ai.status is null then 'NULL'
+                                when ai.status = '' then 'NULL'
                                 else ai.status
                             end status
 	                        FROM [TT1995].[dbo].[act_insurance] ai
@@ -4981,6 +4987,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         N'ประกันภัยรถยนต์' as table_name, li.number_car, li.license_car, 
 							case 
                                 when mi.status is null then 'NULL'
+                                when mi.status = '' then 'NULL'
                                 else mi.status
                             end status
 	                        FROM [TT1995].[dbo].[main_insurance] mi
@@ -5000,6 +5007,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         li.license_car,
                         case 
 	                        when dpi.status is null then 'NULL'
+                            when dpi.status = '' then 'NULL'
 	                        else dpi.status
                         end status,
                         FORMAT(dpi.current_cowrie, 'C', 'th-TH') as price,
@@ -5025,6 +5033,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         li.number_car, li.license_car,
                         case 
 	                        when ei.status is null then 'NULL'
+                            when ei.status = '' then 'NULL'
 	                        else ei.status
                         end status,
                         FORMAT(ei.current_cowrie, 'C', 'th-TH') as price,
@@ -5051,6 +5060,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         li.license_car,
                         case 
 	                        when lv8.lv8_status is null then 'NULL'
+                            when lv8.lv8_status = '' then 'NULL'
 	                        else lv8.lv8_status
                         end status,
                         FORMAT(0, 'C', 'th-TH') as price,
@@ -5077,6 +5087,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 	                        NULL as 'license_car',
 	                        case 
 		                        when lc.lc_status is null then 'NULL'
+                                when lc.lc_status = '' then 'NULL'
 		                        else lc.lc_status
 	                        end status,
 	                        FORMAT(0, 'C', 'th-TH') as price,
@@ -5105,6 +5116,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 	                        NULL as 'license_car',
 	                        case 
 		                        when lmr.lmr_status is null then 'NULL'
+                                when lmr.lmr_status = '' then 'NULL'
 		                        else lmr.lmr_status
 	                        end status,
 	                        FORMAT(0, 'C', 'th-TH') as price,
@@ -5133,6 +5145,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         li.license_car,
                         case 
 	                        when bi.business_status is null then 'NULL'
+                            when bi.business_status  = '' then 'NULL'
 	                        else bi.business_status
                         end status,
                         FORMAT(0, 'C', 'th-TH') as price,
@@ -5160,6 +5173,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         li.license_car,
                         case 
 	                        when bo.business_status is null then 'NULL'
+                            when bo.business_status = '' then 'NULL'
 	                        else bo.business_status
                         end status,
                         FORMAT(0, 'C', 'th-TH') as price,
@@ -5205,6 +5219,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return GbFn.GetData("select data_fleet.fleet,COUNT(data_fleet.fleet) as qty from (
                                     select case 
                                     when driver.fleet is null then 'NULL'
+                                    when driver.fleet = '' then 'NULL'
                                     else driver.fleet
                                     end fleet
                                        from driver ) data_fleet
@@ -5250,32 +5265,58 @@ SELECT passport.id_no as id_no,dp.driver_name,N'พาสสปอร์ต' as 
         End Function
 
         Public Function GetDataDetailDlDriver(filter, year)
+
             Return GbFn.GetData("
-SELECT dl.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่' as table_name, dl.status
+SELECT dl.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่' as table_name, dl.status,
+case 
+    when d.fleet is null then 'NULL'
+    when d.fleet = '' then 'NULL'
+    else d.fleet
+end fleet
   FROM [TT1995].[dbo].driving_license dl
   inner join driver_profile dp on dp.driver_id = dl.driver_id
   inner join driver d on d.driver_name = dp.driver_id
   where (" & GenSqlForFleet(filter, "d.fleet") & ") and year(dl.expire_date) = " & year & "
 union
-SELECT dldot.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งวัตถุอันตราย' as table_name,dldot.status
+SELECT dldot.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งวัตถุอันตราย' as table_name,dldot.status,
+case 
+    when d.fleet is null then 'NULL'
+    when d.fleet = '' then 'NULL'
+    else d.fleet
+end fleet
   FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot
   inner join driver_profile dp on dp.driver_id = dldot.driver_id
   inner join driver d on d.driver_name = dp.driver_id
   where (" & GenSqlForFleet(filter, "d.fleet") & ") and year(dldot.expire_date) = " & year & "
 union
-SELECT dlngt.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งก๊าสธรรมชาติ' as table_name, dlngt.status
+SELECT dlngt.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งก๊าสธรรมชาติ' as table_name, dlngt.status,
+case 
+    when d.fleet is null then 'NULL'
+    when d.fleet = '' then 'NULL'
+    else d.fleet
+end fleet
   FROM [TT1995].[dbo].driving_license_natural_gas_transportation dlngt
   inner join driver_profile dp on dp.driver_id = dlngt.driver_id
   inner join driver d on d.driver_name = dp.driver_id
   where (" & GenSqlForFleet(filter, "d.fleet") & ") and year(dlngt.expire_date) = " & year & "
 union
-SELECT dlot.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งน้ำมัน' as table_name, dlot.status
+SELECT dlot.id_no as id_no,dp.driver_name,N'ใบอนุญาตขับขี่ขนส่งน้ำมัน' as table_name, dlot.status,
+case 
+    when d.fleet is null then 'NULL'
+    when d.fleet = '' then 'NULL'
+    else d.fleet
+end fleet
   FROM [TT1995].[dbo].driving_license_oil_transportation dlot
   inner join driver_profile dp on dp.driver_id = dlot.driver_id
   inner join driver d on d.driver_name = dp.driver_id
   where (" & GenSqlForFleet(filter, "d.fleet") & ") and year(dlot.expire_date) = " & year & "
 union
-SELECT passport.id_no as id_no,dp.driver_name,N'พาสสปอร์ต' as table_name, passport.status
+SELECT passport.id_no as id_no,dp.driver_name,N'พาสสปอร์ต' as table_name, passport.status,
+case 
+    when d.fleet is null then 'NULL'
+    when d.fleet = '' then 'NULL'
+    else d.fleet
+end fleet
   FROM [TT1995].[dbo].passport
   inner join driver_profile dp on dp.driver_id = passport.driver_id
   inner join driver d on d.driver_name = dp.driver_id
@@ -5289,6 +5330,7 @@ SELECT passport.id_no as id_no,dp.driver_name,N'พาสสปอร์ต' as 
                 select _data2.status2 as status,count(_data2.status2) as qty from (
                                 select _data.*, case 
                                     when _data.status is null then 'NULL'
+                                    when _data.status = '' then 'NULL'
                                     else _data.status
                                     end status2
 
