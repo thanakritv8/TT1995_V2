@@ -41,6 +41,9 @@
         .dx-toolbar {
             background-color: #f8f9fc;
         }
+        .dropdown-item {
+            white-space: normal;
+        }
     </style>
 </head>
 <body style="font-family: 'Kanit', sans-serif;">
@@ -131,7 +134,7 @@ End if
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
                 @If Session("13") <> 0 Then@<a Then Class="dropdown-item" href="../Home/BusinessIn">ภายในประเทศ</a>End If
-                @If Session("20") <> 0 Then@<a Then Class="dropdown-item" href="../Home/BusinessOut">ภายนอกประเทศ</a>End If
+                @If Session("20") <> 0 Then@<a Then Class="dropdown-item" href="../Home/BusinessOut">ต่างประเทศ</a>End If
             </div>
         </li>
     End IF
@@ -157,9 +160,9 @@ End IF
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
                 @If Session("17") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ActInsurance">พรบ</a>End If
-                @If Session("15") <> 0 Then@<a Then Class="dropdown-item" href="../Home/MainInsurance">ภัยรถยนต์</a>End If
-                @If Session("16") <> 0 Then@<a Then Class="dropdown-item" href="../Home/DomProIns">ภัยสินค้าภายในประเทศ</a>End If
-                @If Session("18") <> 0 Then@<a Then Class="dropdown-item" href="../Home/EnvironmentInsurance">ภัยสิ่งแวดล้อม</a>End If
+                @If Session("15") <> 0 Then@<a Then Class="dropdown-item" href="../Home/MainInsurance">ประกันภัยรถยนต์</a>End If
+                @If Session("16") <> 0 Then@<a Then Class="dropdown-item" href="../Home/DomProIns">ประกันภัยสินค้าภายในประเทศ+ต่างประเทศ</a>End If
+                @If Session("18") <> 0 Then@<a Then Class="dropdown-item" href="../Home/EnvironmentInsurance">ประกันภัยสิ่งแวดล้อม</a>End If
                 @If Session("10") <> 0 Then@<a Then Class="dropdown-item" href="../Home/Gps_car">GPS ติดรถ</a>End if
             </div>
         </li>

@@ -6,6 +6,8 @@ $('#txtPassword').on('keypress', function (e) {
         checkLogin();
     }
 });
+$('.navbar').hide();
+$('body').css('background-color', '#f8f9fc');
 
 function checkLogin() {
     console.log("test");
