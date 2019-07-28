@@ -5339,32 +5339,32 @@ end fleet
 SELECT  dl.dl_id as id_of_table, 'driving_license' as _table, dl.status as status
 	    FROM [TT1995].[dbo].driving_license dl
 		inner join driver_profile dp on dp.driver_id = dl.driver_id
-	    where  (dl.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dl.status IS NULL) and year(dl.status) = 2019
+	    where  (dl.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dl.status IS NULL) and year(dl.expire_date) = " & year & "
 union
 SELECT  dldot.dldot_id as id_of_table, 'driving_license_dangerous_objects_transportation' as _table, dldot.status as status
 	    FROM [TT1995].[dbo].driving_license_dangerous_objects_transportation dldot
 		inner join driver_profile dp on dp.driver_id = dldot.driver_id
-	    where  (dldot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dldot.status IS NULL) and year(dldot.expire_date) = 2019
+	    where  (dldot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dldot.status IS NULL) and year(dldot.expire_date) = " & year & "
 union
 SELECT  dlngt.dlngt_id as id_of_table, 'driving_license_natural_gas_transportation' as _table, dlngt.status as status
 	    FROM [TT1995].[dbo].driving_license_natural_gas_transportation dlngt
 		inner join driver_profile dp on dp.driver_id = dlngt.driver_id
-	    where  (dlngt.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlngt.status IS NULL) and year(dlngt.expire_date) = 2019
+	    where  (dlngt.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlngt.status IS NULL) and year(dlngt.expire_date) = " & year & "
 union
 SELECT  dlot.dlot_id as id_of_table, 'driving_license_oil_transportation' as _table, dlot.status as status
 	    FROM [TT1995].[dbo].driving_license_oil_transportation dlot
 		inner join driver_profile dp on dp.driver_id = dlot.driver_id
-	    where  (dlot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlot.status IS NULL) and year(dlot.expire_date) = 2019
+	    where  (dlot.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or dlot.status IS NULL) and year(dlot.expire_date) = " & year & "
 union
 SELECT  passport.pas_id as id_of_table, 'passport' as _table, passport.status as status
 	    FROM [TT1995].[dbo].passport
 		inner join driver_profile dp on dp.driver_id = passport.driver_id
-	    where  (passport.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or passport.status IS NULL) and year(passport.expire_date) = 2019
+	    where  (passport.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or passport.status IS NULL) and year(passport.expire_date) = " & year & "
 union
 SELECT  lf.license_factory_id as id_of_table, 'license_factory' as _table, lf.license_factory_status as status
 	    FROM [TT1995].[dbo].license_factory lf
 		inner join driver_profile dp on dp.driver_id = lf.driver_id
-	    where  (lf.license_factory_status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or lf.license_factory_status IS NULL) and year(lf.expire_date) = 2019
+	    where  (lf.license_factory_status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'เสร็จสมบูรณ์') or lf.license_factory_status IS NULL) and year(lf.expire_date) = " & year & "
 
 		) _data ) _data2
 	                                group by _data2.status2
