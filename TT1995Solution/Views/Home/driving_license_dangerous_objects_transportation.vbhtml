@@ -11,8 +11,8 @@ End Code
         height: 100%;
     }
 </style>
-<div> <h4>ใบอนุญาติขับขี่ขนส่งวัตถุอันตราย</h4> </div>
-<div>
+<div class="header">ใบอนุญาตขับขี่ขนส่งวัตถุอันตราย</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 <div class="modal" id="mdNewFile">

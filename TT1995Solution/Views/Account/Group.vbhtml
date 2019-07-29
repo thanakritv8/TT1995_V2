@@ -6,8 +6,8 @@ End Code
         width: 100%;
     }
 </style>
-<div> <h4>กลุ่ม</h4> </div>
-<div>
+<div class="header">กลุ่ม</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 <div id="popup_history"></div>

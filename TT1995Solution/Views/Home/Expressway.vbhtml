@@ -7,13 +7,13 @@ End Code
         height: 100%;
     }S
 </style> 
-<div> <h4>Expressway - ทางด่วน</h4></div>
-<div>
+<div class="header">ทางด่วน</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
-</div>
-<div class="widget-container">
-    <div id="popup"></div>
+    <div class="widget-container">
+        <div id="popup"></div>
+    </div>
 </div>
 @*<div id="popup"></div>*@
 @*<div class="modal" id="mdShowPic">

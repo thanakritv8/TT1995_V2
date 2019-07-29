@@ -10,8 +10,8 @@ End Code
         width: 100%;
     }
 </style>
-<div> <h4>บริษัทประกัน พรบ.</h4> </div>
-<div>
+<div class="header">บริษัทประกัน พ.ร.บ.</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
 </div>

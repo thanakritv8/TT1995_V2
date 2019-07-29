@@ -10,8 +10,8 @@ End Code
         height: 440px;
     }
 </style>
-<div> <h4>บริษัท GPS</h4> </div>
-<div>
+<div class="header">บริษัท GPS</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
 </div>

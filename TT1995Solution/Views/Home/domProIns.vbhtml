@@ -7,8 +7,8 @@ End Code
         height: 100%;
     }
 </style>
-<div> <h4>ประกันสินค้าภายในประเทศ.</h4> </div>
-<div>
+<div class="header">ประกันภัยสินค้าภายในประเทศ+ต่างประเทศ</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
 </div>

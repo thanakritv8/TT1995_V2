@@ -7,8 +7,8 @@ End Code
         width: 100%;
     }
 </style>
-<div> <h4>พาสสปอร์ต</h4> </div>
-<div>
+<div class="header">พาสสปอร์ต</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 <div class="modal" id="mdNewFile">

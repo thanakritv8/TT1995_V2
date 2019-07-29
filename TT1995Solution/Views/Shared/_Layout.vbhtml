@@ -44,6 +44,17 @@
         .dropdown-item {
             white-space: normal;
         }
+        #wrapper #content-wrapper {
+            padding-top: 0px;
+        }
+        .header {
+            background-color: #43425D;
+            font-size: 24px;
+            padding: 12px 15px;
+            color: #fff;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body style="font-family: 'Kanit', sans-serif;">
@@ -159,7 +170,7 @@ End IF
                 <span Class="text-light">ประกัน & GPS</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
-                @If Session("17") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ActInsurance">พรบ</a>End If
+                @If Session("17") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ActInsurance">พ.ร.บ.</a>End If
                 @If Session("15") <> 0 Then@<a Then Class="dropdown-item" href="../Home/MainInsurance">ประกันภัยรถยนต์</a>End If
                 @If Session("16") <> 0 Then@<a Then Class="dropdown-item" href="../Home/DomProIns">ประกันภัยสินค้าภายในประเทศ+ต่างประเทศ</a>End If
                 @If Session("18") <> 0 Then@<a Then Class="dropdown-item" href="../Home/EnvironmentInsurance">ประกันภัยสิ่งแวดล้อม</a>End If
@@ -174,7 +185,7 @@ End IF
                 <span Class="text-light">บริษัท</span>
             </a>
             <div Class="dropdown-menu" aria-labelledby="pagesDropdown">
-                @If Session("8") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ActInsCom">ประกัน พรบ</a>End If
+                @If Session("8") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ActInsCom">ประกัน พ.ร.บ.</a>End If
                 @If Session("7") <> 0 Then@<a Then Class="dropdown-item" href="../Home/MainInsCom">ประกันภัยรถยนต์</a>End If
                 @If Session("5") <> 0 Then@<a Then Class="dropdown-item" href="../Home/ProInsCom">ประกันภัยสินค้า</a>End If
                 @If Session("29") <> 0 Then@<a Then Class="dropdown-item" href="../Home/EnvInsCom">ประกันภัยสิ่งแวดล้อม</a>End If
@@ -230,10 +241,8 @@ End IF
         End If
         <!-- Sidebar -->
 
-        <div id="content-wrapper" class="mt-0" >
-            <div class="container-fluid" >
-                @RenderBody()
-            </div>
+        <div id="content-wrapper" class="mt-0" >         
+            @RenderBody()
             <!-- Logout Modal-->
             <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">

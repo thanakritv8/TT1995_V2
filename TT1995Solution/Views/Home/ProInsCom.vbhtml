@@ -8,8 +8,8 @@ End Code
     }
 
 </style>
-<div> <h4>บริษัทประกันสินค้า</h4> </div>
-<div>
+<div class="header">บริษัทประกันภัยสินค้า</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
 </div>

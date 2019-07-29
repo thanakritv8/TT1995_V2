@@ -6,7 +6,8 @@ End Code
       width: 100%;
     }
 </style>
-<div>
+<div class="header">การค้นหา</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 <script>
