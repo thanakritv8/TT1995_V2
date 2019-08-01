@@ -2,22 +2,22 @@
     ViewData("Title") = "Report3"
 End Code
 
-<div>
-    <h4>บันทึกถ้อยคำ กรณีแจ้งเอกสาร หรือ แผ่นป้ายทะเบียนสูญหาย</h4>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div id="newRowButton" style="float: right"></div>
+<div class="header">เอกสาร บันทึกถ้อยคำ</div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-12">
+            <div id="newRowButton" style="float: right"></div>
+        </div>
+    </div>
+    <div>
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+        <div id="context-menu"></div>
+    </div>
+    <div class="widget-container">
+        <div id="popup"></div>
     </div>
 </div>
-<div>
-    <div class="mt-3 mb-3" id="gridContainer"></div>
-    <div id="context-menu"></div>
-</div>
-<div class="widget-container">
-    <div id="popup"></div>
-</div>
-
 <style>
     .dx-datagrid .dx-link {
         color: #343a40;

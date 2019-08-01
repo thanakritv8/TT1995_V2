@@ -2,20 +2,21 @@
     ViewData("Title") = "Report1"
 End Code
 
-<div>
-    <h4>กรมการขนส่ง แบบคำขออื่นๆ</h4>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div id="newRowButton" style="float: right"></div>
+<div class="header">เอกสาร กรมการขนส่ง แบบคำขออื่นๆ</div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-12">
+            <div id="newRowButton" style="float: right"></div>
+        </div>
     </div>
-</div>
-<div>
-    <div class="mt-3 mb-3" id="gridContainer"></div>
-    <div id="context-menu"></div>
-</div>
-<div class="widget-container">
-    <div id="popup"></div>
+    <div>
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+        <div id="context-menu"></div>
+    </div>
+    <div class="widget-container">
+        <div id="popup"></div>
+    </div>
 </div>
 <style>
     .dx-datagrid .dx-link {

@@ -12,8 +12,8 @@ End Code
         height: 100%;
     }
 </style>
-<div> <h4>ใบอนุญาต(วอ.8)</h4> </div>
-<div>
+<div class="header">ใบอนุญาต (วอ.8)</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 

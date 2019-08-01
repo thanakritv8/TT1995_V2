@@ -74,7 +74,7 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("DESKTOP-FPPVLED\SQLEXPRESS")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("103.253.72.112\SQLEXPRESS")>  _
         Public ReadOnly Property NameServer() As String
             Get
                 Return CType(Me("NameServer"),String)

@@ -9,7 +9,7 @@
       <Value Profile="(Default)">P@ssw0rd</Value>
     </Setting>
     <Setting Name="NameServer" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">DESKTOP-FPPVLED\SQLEXPRESS</Value>
+      <Value Profile="(Default)">103.253.72.112\SQLEXPRESS</Value>
     </Setting>
     <Setting Name="DataBase" Type="System.String" Scope="Application">
       <Value Profile="(Default)">TT1995</Value>

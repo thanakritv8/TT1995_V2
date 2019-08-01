@@ -11,8 +11,8 @@ End Code
         height: 100%;
     }
 </style>
-<div> <h4>ประกอบการภายนอกประเทศ</h4> </div>
-<div>
+<div class="header">ประกอบการต่างประเทศ</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
 </div>
 

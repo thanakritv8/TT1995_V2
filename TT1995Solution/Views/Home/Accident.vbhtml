@@ -7,13 +7,14 @@ End Code
         height: 100%;
     }
 </style>
-<div> <h4>Accident - บันทึกอุบัติเหตุ </h4> </div>
-<div>
+<div class="header">บันทึกอุบัติเหตุ</div>
+<div class="container-fluid">
     <div class="mt-3 mb-3" id="gridContainer"></div>
     <div id="context-menu"></div>
-</div>
-<div class="widget-container">
-    <div id="popup"></div>
+
+    <div class="widget-container">
+        <div id="popup"></div>
+    </div>
 </div>
 @*<div id="popup"></div>*@
 @*<div class="modal" id="mdShowPic">
