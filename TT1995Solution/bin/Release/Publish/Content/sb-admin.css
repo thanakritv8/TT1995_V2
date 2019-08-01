@@ -3,17 +3,14 @@
  * Copyright 2013-2018 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-sb-admin/blob/master/LICENSE)
  */
-/*@font-face {
-      font-family: "Helvetica Condensed";
-      src: url("../fonts/Helvetica Condens.ttf");
-}*/ 
+
 html {
   position: relative;
   min-height: 100%;
 }
+
 body {
   height: 100%;
-  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
 }
 
 #wrapper {
@@ -27,6 +24,7 @@ body {
   width: 100%;
   padding-top: 1rem;
   padding-bottom: 80px;
+  background-color: #f8f9fc;
 }
 
 body.fixed-nav #content-wrapper {
@@ -104,7 +102,7 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
   border: 0;
   font-weight: 900;
   content: '\f105';
-  font-family: 'Helvetica';
+  font-family: 'Font Awesome 5 Free';
 }
 
 .navbar-nav .nav-item.dropdown.show .dropdown-toggle::after {
@@ -135,7 +133,7 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
 
 .sidebar {
   width: 90px !important;
-  background-color: rgba(248, 249, 250, 1); /*212529*/
+  background-color: #212529;
   min-height: calc(100vh - 56px);
 }
 
@@ -194,6 +192,7 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
     text-align: left;
     padding: 1rem;
     width: 225px;
+    letter-spacing: 1px;
   }
   .sidebar .nav-item .nav-link span {
     font-size: 1rem;
@@ -352,13 +351,16 @@ footer.sticky-footer {
   right: 0;
   bottom: 0;
   width: calc(100% - 90px);
-  height: 80px;
-  background-color: #e9ecef;
+  //height: 70px;
+  background-color: #43425D;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 footer.sticky-footer .copyright {
   line-height: 1;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
 }
 
 @media (min-width: 768px) {

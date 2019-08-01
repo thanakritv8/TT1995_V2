@@ -493,7 +493,7 @@ $(function () {
     function GetStackedBarTabien(filter) {
         return $.ajax({
             type: "POST",
-            data: "{ filter:'" + filter + "',year:"+ $('#year').val() +"}",
+            data: "{ filter:'" + filter + "',year:'" + $('#year').val() + "'}",
             url: "../Home/GetStackedBarTabien",
             contentType: "application/json; charset=utf-8",
             dataType: "json",

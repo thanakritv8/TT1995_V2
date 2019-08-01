@@ -85,7 +85,7 @@ $(function () {
     function show_popup(title, ChartType, arg1, arg2) {
         popup_history.option('title', title);
         popup_history._options.contentTemplate = function (content) {
-            var maxHeight = Math.ceil($("#popup_history .dx-overlay-content").height() - 160);
+            var maxHeight = Math.ceil($("#popup_history .dx-overlay-content").height() - 170);
             content.append("<div id='gridHistory' style='max-height: " + maxHeight + "px;' ></div>");
         }
         $("#popup_history").dxPopup("show");
@@ -493,7 +493,7 @@ $(function () {
     function GetStackedBarTabien(filter) {
         return $.ajax({
             type: "POST",
-            data: "{ filter:'" + filter + "',year:"+ $('#year').val() +"}",
+            data: "{ filter:'" + filter + "',year:'" + $('#year').val() + "'}",
             url: "../Home/GetStackedBarTabien",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -1193,7 +1193,7 @@ $(function () {
                 text: "License"
             }
         },
-        title: "Main License",
+        title: "Driver License",
         argumentAxis: { // or valueAxis, or commonAxisSettings
             label: {
                 displayMode: "stagger",
@@ -1210,7 +1210,7 @@ $(function () {
         // icon: "exportxlsx",
         visible: true,
         onClick: function () {
-            show_popup('Car Category');
+            show_popup('Data All', 'driverFleetAll');
         }
     });
 

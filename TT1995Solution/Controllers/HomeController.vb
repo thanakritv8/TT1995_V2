@@ -4807,6 +4807,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 	                                FROM  business_out bo 
 	                                where  (bo.business_status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'ตรวจ GPS', N'เสร็จสมบูรณ์') or bo.business_status IS NULL) 
 									and year(bo.business_expire) = " & year & "
+                                union
+								SELECT  li.license_id, li.number_car, li.license_car
+	                                , lcf.lcf_id as id_of_table, 'license_car_factory' as _table, lcf.status as status
+	                                FROM [TT1995].[dbo].[license] li
+	                                inner join license_car_factory lcf on lcf.license_id = li.license_id
+	                                where  (lcf.status in (N'ยังไม่ได้ดำเนินการ', N'ขาดต่อ', N'จัดเตรียมเอกสาร', N'ยื่นเอกสาร', N'ตรวจ GPS', N'เสร็จสมบูรณ์') or lcf.status IS NULL)
+									and year(lcf.expire_date) = " & year & "
 									) _data ) _data2
 	                                group by _data2.status2
                                     
@@ -4824,16 +4831,19 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 	from(
 		SELECT  DATENAME(month, tax.tax_expire) as month_expired, COUNT(MONTH(tax.tax_expire)) as tax_qty, 0 as ai_qty, 0 as mi_qty,sum(tax.tax_rate) as price
 		  FROM [TT1995].[dbo].[tax] tax 
+          inner join license li on li.license_id = tax.license_id
 		  where (" & GenSqlForStatus(filter, "tax.tax_status") & ") and year(tax.tax_expire) = " & year & "
 		  group by tax.tax_status, DATENAME(month, tax.tax_expire)
 		Union
 		SELECT  DATENAME(month, ai.end_date) as month_expired, 0 as tax_qty, COUNT(MONTH(ai.end_date)) as ai_qty, 0 as mi_qty,sum(ai.price) as price
 		  FROM [TT1995].[dbo].[act_insurance] ai
+          inner join license li on li.license_id = ai.license_id
 		  where (" & GenSqlForStatus(filter, "ai.status") & ") and year(ai.end_date) = " & year & "
 		  group by ai.status, DATENAME(month, ai.end_date)
 		Union
 		SELECT  DATENAME(month, mi.end_date) as month_expired, 0 as tax_qty, 0 as ai_qty, COUNT(MONTH(mi.end_date)) as mi_qty,sum(mi.current_cowrie) as price
 		  FROM [TT1995].[dbo].[main_insurance] mi
+          inner join license li on li.license_id = mi.license_id
 		  where (" & GenSqlForStatus(filter, "mi.status") & ")  and year(mi.end_date) = " & year & "
 		  group by mi.status, DATENAME(month, mi.end_date)
 		
@@ -4871,18 +4881,21 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 		                                SELECT  DATENAME(month, dpi.end_date) as month_expired, COUNT(MONTH(dpi.end_date)) as dpi_qty, 0 as ei_qty, 0 as lv8_qty, 0 as lc_qty, 0 as lmr_qty, 0 as bi_qty, 0 as bo_qty
 			                                ,sum(dpi.current_cowrie) as price
 		                                  FROM [TT1995].[dbo].[domestic_product_insurance] dpi 
+                                          inner join license li on li.license_id = dpi.license_id
 		                                  where (" & GenSqlForStatus(filter, "dpi.status") & ") and year(dpi.end_date) = " & year & "
 		                                  group by dpi.status, DATENAME(month, dpi.end_date)
 		                                Union
 		                                SELECT  DATENAME(month, ei.end_date) as month_expired,0 as dpi_qty, COUNT(MONTH(ei.end_date)) as ei_qty, 0 as lv8_qty, 0 as lc_qty, 0 as lmr_qty, 0 as bi_qty, 0 as bo_qty
 			                                ,sum(ei.current_cowrie) as price
 		                                  FROM [TT1995].[dbo].[environment_insurance] ei
+                                          inner join license li on li.license_id = ei.license_id
 		                                  where (" & GenSqlForStatus(filter, "ei.status") & ") and year(ei.end_date) = " & year & "
 		                                  group by ei.status, DATENAME(month, ei.end_date)
 		                                Union
 		                                SELECT  DATENAME(month, lv8.lv8_expire) as month_expired,0 as dpi_qty, 0 as ei_qty, COUNT(MONTH(lv8.lv8_expire)) as lv8_qty, 0 as lc_qty, 0 as lmr_qty, 0 as bi_qty, 0 as bo_qty
 			                                ,'0' as price
 		                                  FROM [TT1995].[dbo].[license_v8] lv8 
+                                          inner join license li on li.license_id = lv8.license_id
 		                                  where  (" & GenSqlForStatus(filter, "lv8.lv8_status") & ")  and year(lv8.lv8_expire) = " & year & "
 		                                  group by lv8.lv8_status, DATENAME(month, lv8.lv8_expire)
 		                                Union
