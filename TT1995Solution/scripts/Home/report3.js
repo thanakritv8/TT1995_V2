@@ -1,4 +1,5 @@
 ﻿var dataAll;
+$("a:contains('บันทึกถ้อยคำ')").last().addClass("active");
 var show_column = [
         {
             dataField: "id",

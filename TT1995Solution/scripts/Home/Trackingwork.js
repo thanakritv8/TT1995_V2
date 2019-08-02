@@ -24,6 +24,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
+    $("a:contains('ติดตามงาน')").last().addClass("active");
     function GetTrackingworkData() {
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
         return $.ajax({

@@ -18,7 +18,7 @@ var dataLookupFilter;
 var gc;
 
 $(function () {
-    $("a:contains('ภายนอกประเทศ')").addClass("active");
+    $("a:contains('ต่างประเทศ')").addClass("active");
     function fnGetHistory(table, idOfTable) {
         //โชว์ข้อมูลประวัติ
         return $.ajax({

@@ -1,4 +1,5 @@
 ﻿var dataAll;
+$("a:contains('หนังสือมอบอำนาจ')").last().addClass("active");
 var show_column = [
         {
             dataField: "id",

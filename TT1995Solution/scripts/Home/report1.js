@@ -1,4 +1,5 @@
 ﻿var dataAll;
+$("a:contains('แบบคำขออื่นๆ')").last().addClass("active");
 var show_column = [
         {
             dataField: "id",

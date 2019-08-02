@@ -25,7 +25,9 @@ var contextMenuItemsFile = [
 ];
 var OptionsMenu = contextMenuItemsFolder;
 $(function () {
-    $("a:contains('บอข')").first().addClass("active");
+    //$("a:contains('บอข')").second().addClass("active");
+
+    $("a[href*='driving_license']").first().addClass("active");
 
     //กำหนดปุ่มเพิ่มรูปภาพเข้าไปในระบบ
     $("#btnSave").dxButton({

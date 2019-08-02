@@ -1,6 +1,6 @@
 ﻿$(function () {
     var tableName = 'Driver';
-    $("a:contains('พขร')").addClass("active");
+    $("a:contains('พขร')").last().addClass("active");
     var dataGrid = $("#gridContainer").dxDataGrid({
         searchPanel: {
             visible: true,

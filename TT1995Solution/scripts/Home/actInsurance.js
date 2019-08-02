@@ -27,7 +27,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
-    $("a:contains('พรบ')").first().addClass("active");
+    $("a:contains('พ.ร.บ.')").first().addClass("active");
     function getDataAi() {
         var dataValue = [];
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
