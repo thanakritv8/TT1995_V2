@@ -472,3 +472,11 @@ End Code
 </div>
 
 <script src="~/scripts/Home/report1.js"></script>
+<script>
+
+    $(".d7").next().toggle();
+    $(".d7").click(function (e) {
+        e.stopPropagation();
+        $(".d7").next().toggle();
+    });
+</script>

@@ -211,7 +211,7 @@ End IF
     End If
     @If True Then
         @<li Class="nav-item dropdown">
-            <a Class="nav-link dropdown-toggle  d6" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a Class="nav-link dropdown-toggle  d7" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-file-alt"></i>
                 <span Class="text-light"> เอกสาร</span>
             </a>
