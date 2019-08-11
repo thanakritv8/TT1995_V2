@@ -704,7 +704,9 @@ $(function () {
             processData: false,
             success: function (data) {
                 fileDataPic = new FormData();
+
                 document.getElementById("btnSave").disabled = false;
+                document.getElementById("btnNewFolder").disabled = false;
                 $("#mdNewFile").modal('hide');
                 $("#mdNewFolder").modal('hide');
                 $("#picCar").hide();
