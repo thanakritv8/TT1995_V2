@@ -8,6 +8,8 @@ var _dataSource;
 var dataGridAll;
 var dataLookupFilter;
 var gbE;
+var CurrentId;
+var IsCheckBoxSelect = [];
 
 //คลิกขวาโชว์รายการ   
 var contextMenuItemsRoot = [
@@ -85,6 +87,9 @@ $(function () {
             visible: true,
             width: 240,
             placeholder: "Search..."
+        },
+        selection: {
+            mode: "multiple"
         },
         allowColumnResizing: true,
         columnResizingMode: "widget",
@@ -276,21 +281,37 @@ $(function () {
             }
         },
         onSelectionChanged: function (e) {
-            e.component.collapseAll(-1);
-            e.component.expandRow(e.currentSelectedRowKeys[0]);
+            //e.component.collapseAll(-1);
+            //e.component.expandRow(e.currentSelectedRowKeys[0]);
+            //gbE = e;
+            //isFirstClick = false;
+        },
+        onCellClick: function (e) {
+            if (e.columnIndex === 0 && e.rowType !== "detail") {
+                //dataGrid.expandAll(-1);
+                //dataGrid.collapseAll(-1);
+                //console.log('1');
+                //console.log(e);
+                //CurrentId = 0;
+                IsCheckBoxSelect.push(e.data.ai_id);
+            } else if (CurrentId === e.key && e.rowType !== "detail") {
+                dataGrid.expandAll(-1);
+                dataGrid.collapseAll(-1);
+                
+                CurrentId = 0;
+                //console.log(e);
+                //console.log('2');
+            }
+            else if (e.rowType !== "detail") {
+                e.component.collapseAll(-1);
+                e.component.expandRow(e.key);
+                CurrentId = e.key;
+                //console.log('3');
+            }
+            //console.log(IsCheckBoxSelect);
+
             gbE = e;
             isFirstClick = false;
-        },
-        onRowClick: function (e) {
-            if (gbE.currentSelectedRowKeys[0].ai_id == e.key.ai_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
-                dataGrid.clearSelection();
-            } else if (gbE.currentSelectedRowKeys[0].ai_id == e.key.ai_id && !isFirstClick) {
-                isFirstClick = true;
-                rowIndex = e.rowIndex;
-            }
-        },
-        selection: {
-            mode: "single"
         },
     }).dxDataGrid('instance');
     //จบการกำหนด dataGrid

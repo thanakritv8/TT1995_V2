@@ -156,38 +156,6 @@ $(function () {
                 showTitle: true,
                 width: "70%",
                 position: { my: "center", at: "center", of: window },
-                toolbarItems: [{
-                    toolbar: 'bottom',
-                    location: 'after',
-                    widget: "dxButton",
-                    options: {
-                        text: "Save",
-                        onClick: function (e) {
-                            //alert(statusUpdateProtection);
-                            //console.log(gbE);
-                            ////console.log(gbE);
-                            ////console.log(dataGrid);
-                            if (typeof gbE != "undefined") {
-                                if (statusUpdateProtection == 2) {
-                                    updateProtection(gbE.data.dl_id, html_editor.option("value"));
-                                    gbE.data.protection = html_editor.option("value");
-                                }
-                            }
-                            dataGrid.saveEditData();
-                        }
-                    }
-                }, {
-                    toolbar: 'bottom',
-                    location: 'after',
-                    widget: "dxButton",
-                    options: {
-                        text: "Cancel",
-                        onClick: function (args) {
-                            console.log(args);
-                            dataGrid.cancelEditData();
-                        }
-                    }
-                }]
 
             },
             useIcons: true,
@@ -245,8 +213,10 @@ $(function () {
                     "icon": "exportpdf",
                     "text": "View",
                     onClick: function () {
-                        if (fileOpen != null) {
+                        if (typeof fileOpen != "undefined" && fileOpen != null) {
                             window.open(fileOpen, '_blank');
+                        } else {
+                            alert('ไม่พบไฟล์!!');
                         }
                     }
                 });
@@ -265,10 +235,12 @@ $(function () {
             e.component.collapseAll(-1);
             e.component.expandRow(e.currentSelectedRowKeys[0]);
             gbE = e;
+            if (e.currentSelectedRowKeys.length > 0) {
+                fileOpen = e.currentSelectedRowKeys[0].path;
+            }
             isFirstClick = false;
         },
         onRowClick: function (e) {
-            fileOpen = e.currentSelectedRowKeys[0].path;
             if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
                 dataGrid.clearSelection();
             } else if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && !isFirstClick) {
@@ -473,6 +445,8 @@ $(function () {
                 }
             }
         });
+        dataGrid.option('dataSource', getDataDl());
+        dataGrid.refresh();
         return returnStatus;
     }
 
@@ -503,6 +477,9 @@ $(function () {
                 if (data[0].Status != '0') {
                     fileOpen = data[0].Status;
                     DevExpress.ui.notify("Upload file success.", "success");
+
+                    dataGrid.option('dataSource', getDataDl());
+                    dataGrid.refresh();
                 } else {
                     DevExpress.ui.notify("Upload file fail", "error");
                 }

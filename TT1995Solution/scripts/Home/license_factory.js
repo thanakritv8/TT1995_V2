@@ -99,6 +99,10 @@ $(function () {
         selection: {
             mode: "single"
         },
+        "export": {
+            enabled: true,
+            fileName: "license_factory",
+        },
         searchPanel: {
             visible: true,
             width: 240,

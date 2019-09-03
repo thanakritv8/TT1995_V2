@@ -6,6 +6,7 @@
 $(function () {
     var dataGrid = $("#gridContainer").dxDataGrid({
         column: dataColumn,
+        keyExpr: "lookup_id",
         searchPanel: {
             visible: true,
             width: 240,
@@ -39,11 +40,16 @@ $(function () {
             visible: true
         },
         onRowInserting: function (e) {
-            fnInsertLookup(e.data);
+            var idInsert = fnInsertLookup(e.data);
+            if (idInsert != 0) {
+                e.data.lookup_id = idInsert;
+            } else {
+                e.cancel = true;
+            }
+            
         },
         onRowRemoving: function (e) {
-            console.log(e);
-            fnDeleteLookup(e.key.lookup_id);
+            fnDeleteLookup(e.key);
         },
         selection: {
             mode: "single"
@@ -114,7 +120,7 @@ $(function () {
     
 
     function fnInsertLookup(dataGrid) {
-        console.log(JSON.stringify(dataGrid));
+        var returnId = 0;
         $.ajax({
             type: "POST",
             url: "../Manage/InsertLookup",
@@ -123,13 +129,15 @@ $(function () {
             dataType: "json",
             async: false,
             success: function (data) {
-                if (data[0].Status == "1") {
+                returnId = data[0].Status;
+                if (data[0].Status != "0") {
                     DevExpress.ui.notify("เพิ่มการค้นหาเรียบร้อยแล้ว", "success");
                 } else {
                     DevExpress.ui.notify(data[0].Status, "error");
                 }
             }
         });
+        return returnId;
     }
 
     function fnDeleteLookup(keyItem) {

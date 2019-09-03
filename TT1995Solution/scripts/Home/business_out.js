@@ -129,6 +129,7 @@ $(function () {
         },
         masterDetail: {
             enabled: false,
+            autoExpandAll: true,
             template: function (container, options) {
                 container.append($('<div class="gc"></div>'));
                 dataGridAll = fnGetBusinessOutPermission(options.key.business_id);

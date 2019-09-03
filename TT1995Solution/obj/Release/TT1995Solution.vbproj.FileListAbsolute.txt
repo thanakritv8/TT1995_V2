@@ -201,3 +201,4 @@ F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\obj\Release\TT1995
 F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\obj\Release\TT1995Solution.dll
 F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\obj\Release\TT1995Solution.xml
 F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\obj\Release\TT1995Solution.pdb
+F:\TT1995\Tabien\Code\TT1995_V2\TT1995Solution\TT1995Solution\obj\Release\TT1995Solution.vbprojAssemblyReference.cache

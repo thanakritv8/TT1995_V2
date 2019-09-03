@@ -200,7 +200,7 @@ var show_column = [
 function getData() {
     return $.ajax({
         type: "GET",
-        url: "http://43.254.133.49:8015/TTApi/Tabien/Report/GetReport1All",
+        url: "http://tabien.threetrans.com/TTApi/Tabien/Report/GetReport1All",
         dataType: "json",
         async: false,
         success: function (data) {
@@ -214,7 +214,7 @@ dataAll = getData();
 function getreport1() {
     $.ajax({
         type: "GET",
-        url: "http://43.254.133.49:8015/TTApi/Tabien/Report/GetReport1All",
+        url: "http://tabien.threetrans.com/TTApi/Tabien/Report/GetReport1All",
         dataType: 'json',
         async: false,
         success: function (data) {
@@ -285,7 +285,7 @@ function create_doc() {
 $('#btnSaveForm1').click(function () {
     $.ajax({
         type: "POST",
-        url: "http://43.254.133.49:8015/TTApi/Tabien/Report/InsertReport1",
+        url: "http://tabien.threetrans.com/TTApi/Tabien/Report/InsertReport1",
         //contentType: "application/json; charset=utf-8",
         data: {
             id: "",
@@ -343,7 +343,7 @@ $('#btnSaveForm1').click(function () {
 $('#btnUpdateForm1').click(function () {
     $.ajax({
         type: "POST",
-        url: "http://43.254.133.49:8015/TTApi/Tabien/Report/UpdateReport1",
+        url: "http://tabien.threetrans.com/TTApi/Tabien/Report/UpdateReport1",
         //contentType: "application/json; charset=utf-8",
         data: {
             id: $('#edit_form1 #txt0').val(),
@@ -403,7 +403,7 @@ function delete_form(id) {
     if (cf == true) {
         $.ajax({
             type: "POST",
-            url: "http://43.254.133.49:8015/TTApi/Tabien/Report/DeleteReport1",
+            url: "http://tabien.threetrans.com/TTApi/Tabien/Report/DeleteReport1",
             //contentType: "application/json; charset=utf-8",
             data: {id: id},
             dataType: "json",
@@ -423,7 +423,7 @@ function delete_form(id) {
 // ปริ้น
 function print_pdf(id) {
 
-    window.open('http://43.254.133.49:8015/TTApi/Report/ExportWorkSheet?id=' + id + '&name_report=Report1', '_blank');
+    window.open('http://tabien.threetrans.com/TTApi/Report/ExportWorkSheet?id=' + id + '&name_report=Report1', '_blank');
 }
 
 function show_popup_view(e, title, options, id) {

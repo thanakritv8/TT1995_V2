@@ -42,12 +42,14 @@ Namespace Controllers
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO lookup (column_id, data_list, create_by_user_id) VALUES(" & column_id & ", N'" & data_list.Insert(data_list.IndexOf("'") + 1, "'") & "', " & Session("UserId") & ")"
-            If objDB.ExecuteSQL(_SQL, cn) Then
-                DtJson.Rows.Add("1")
-            Else
-                DtJson.Rows.Add("0")
-            End If
+            Dim _SQL As String = "INSERT INTO lookup (column_id, data_list, create_by_user_id) OUTPUT Inserted.lookup_id VALUES(" & column_id & ", N'" & IIf(data_list.IndexOf("'") >= 0, data_list.Insert(data_list.IndexOf("'") + 1, "'"), data_list) & "', " & Session("UserId") & ") "
+            'If objDB.ExecuteSQL(_SQL, cn) Then
+            '    DtJson.Rows.Add("1")
+            'Else
+            '    DtJson.Rows.Add("0")
+            'End If
+
+            DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
@@ -62,7 +64,7 @@ Namespace Controllers
 
         Public Function GetTable() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT table_id, [display] FROM config_table"
+            Dim _SQL As String = "SELECT table_id, [display] FROM config_table order by display"
             Dim DtTable As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtTable.Rows Select DtTable.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
