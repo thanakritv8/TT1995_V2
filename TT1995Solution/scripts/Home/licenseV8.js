@@ -14,6 +14,8 @@ var dataGridFull;
 var dataLookupFilter;
 var gbTableId = '28';
 var fileOpen;
+var CurrentId;
+var IsCheckBoxSelect = [];
 
 $(function () {
     $("a:contains('วัตถุอันตราย(วอ.8)')").addClass("active");
@@ -95,9 +97,6 @@ $(function () {
         columnResizingMode: "widget",
         dataSource: getLv8(),
         showBorders: true,
-        selection: {
-            mode: "single"
-        },
         searchPanel: {
             visible: true,
             width: 240,
@@ -145,14 +144,7 @@ $(function () {
             },
             useIcons: true
         },
-        onSelectionChanged: function (e) {
-            e.component.collapseAll(-1);
-            e.component.expandRow(e.currentSelectedRowKeys[0]);
-            gbE = e;
-            fileOpen = e.currentSelectedRowKeys[0].path;
-            console.log(gbE);
-            isFirstClick = false;
-        },
+        
         onEditingStart: function (e) {
             dataGrid.option('columns[0].allowEditing', false);
         },
@@ -168,13 +160,44 @@ $(function () {
             console.log(dataGrid);
             dataGrid.option('columns[0].allowEditing', true);
         },
-        onRowClick: function (e) {
-            if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
-                dataGrid.clearSelection();
-            } else if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && !isFirstClick) {
-                isFirstClick = true;
-                rowIndex = e.rowIndex;
+        //onSelectionChanged: function (e) {
+        //    e.component.collapseAll(-1);
+        //    e.component.expandRow(e.currentSelectedRowKeys[0]);
+        //    gbE = e;
+        //    fileOpen = e.currentSelectedRowKeys[0].path;
+        //    console.log(gbE);
+        //    isFirstClick = false;
+        //},
+        //onRowClick: function (e) {
+        //    if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
+        //        dataGrid.clearSelection();
+        //    } else if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && !isFirstClick) {
+        //        isFirstClick = true;
+        //        rowIndex = e.rowIndex;
+        //    }
+        //},
+        onCellClick: function (e) {
+            
+            if (e.columnIndex === 0 && e.rowType !== "detail") {
+                if (e.row.isSelected) {
+                    IsCheckBoxSelect.push(e.data.lv8_id);
+                } else {
+                    IsCheckBoxSelect.splice($.inArray(e.data.lv8_id, IsCheckBoxSelect), 1);
+                }
+            } else if (CurrentId === e.key && e.rowType !== "detail") {
+                dataGrid.expandAll(-1);
+                dataGrid.collapseAll(-1);
+                CurrentId = 0;
             }
+            else if (e.rowType !== "detail") {
+                e.component.collapseAll(-1);
+                e.component.expandRow(e.key);
+                CurrentId = e.key;
+            }
+            gbE = e;
+        },
+        selection: {
+            mode: "multiple"
         },
         onRowUpdating: function (e) {
             e.cancel = !fnUpdateLv8(e.newData, e.key.lv8_id);
@@ -397,7 +420,7 @@ $(function () {
 
                 }
                 //รายการหน้าโชว์หน้าเพิ่มและแก้ไข
-                if (item.dataField != "create_date" && item.dataField != "create_by_user_id" && item.dataField != "update_date" && item.dataField != "update_by_user_id" && item.dataField != "history") {
+                if (item.dataField != "create_date" && item.dataField != "create_by_user_id" && item.dataField != "update_date" && item.dataField != "update_by_user_id" && item.dataField != "history" && item.dataField != "group_update") {
                     if (item.dataField == "number_car") {
                         itemEditing.push({
                             colSpan: item.colSpan,
@@ -517,6 +540,8 @@ $(function () {
         var boolUpdate = false;
         newData.lv8_id = keyItem;
         newData.IdTable = gbTableId;
+        newData.update_group = IsCheckBoxSelect;
+        
         $.ajax({
             type: "POST",
             url: "../Home/UpdateLv8",

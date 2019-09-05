@@ -4,6 +4,8 @@ var gbE;
 var fileDataPdf;
 var fileOpen;
 var gbTableId = '23';
+var CurrentId;
+var IsCheckBoxSelect = [];
 
 //ตัวแปรควบคุมการคลิก treeview
 var isFirstClick = false;
@@ -68,9 +70,6 @@ $(function () {
             width: 240,
             placeholder: "Search..."
         },
-        selection: {
-            mode: "single"
-        },
         editing: {
             mode: "popup",
             allowUpdating: boolStatus,
@@ -88,22 +87,46 @@ $(function () {
             },
             useIcons: true,
         },
-        onSelectionChanged: function (e) {
-            e.component.collapseAll(-1);
-            e.component.expandRow(e.currentSelectedRowKeys[0]);
-            gbE = e;
-            fileOpen = e.currentSelectedRowKeys[0].lmr_path;
-            console.log(gbE);
-            isFirstClick = false;
-        },
-        onRowClick: function (e) {
-            if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
-                dataGrid.clearSelection();
-            } else if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && !isFirstClick) {
-                isFirstClick = true;
-                rowIndex = e.rowIndex;
+        onCellClick: function (e) {
+            
+            if (e.columnIndex === 0 && e.rowType !== "detail") {
+                if (e.row.isSelected) {
+                    IsCheckBoxSelect.push(e.data.lmr_id);
+                } else {
+                    IsCheckBoxSelect.splice($.inArray(e.data.lmr_id, IsCheckBoxSelect), 1);
+                }
+            } else if (CurrentId === e.key && e.rowType !== "detail") {
+                dataGrid.expandAll(-1);
+                dataGrid.collapseAll(-1);
+                CurrentId = 0;
             }
+            else if (e.rowType !== "detail") {
+                e.component.collapseAll(-1);
+                e.component.expandRow(e.key);
+                CurrentId = e.key;
+            }
+            console.log(e.selectedRowsData);
+            gbE = e;
         },
+        selection: {
+            mode: "multiple"
+        },
+        //onSelectionChanged: function (e) {
+        //    e.component.collapseAll(-1);
+        //    e.component.expandRow(e.currentSelectedRowKeys[0]);
+        //    gbE = e;
+        //    fileOpen = e.currentSelectedRowKeys[0].lmr_path;
+        //    console.log(gbE);
+        //    isFirstClick = false;
+        //},
+        //onRowClick: function (e) {
+        //    if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && isFirstClick && rowIndex == e.rowIndex && gbE.currentDeselectedRowKeys.length == 0) {
+        //        dataGrid.clearSelection();
+        //    } else if (gbE.currentSelectedRowKeys[0].license_id == e.key.license_id && !isFirstClick) {
+        //        isFirstClick = true;
+        //        rowIndex = e.rowIndex;
+        //    }
+        //},
         onRowUpdating: function (e) {
             e.cancel = !fnUpdateLmr(e.newData, e.key.lmr_id);
         },
@@ -287,6 +310,7 @@ $(function () {
         dataType: "json",
         async: false,
         success: function (data) {
+            console.log(data);
             var ndata = 0;
             data.forEach(function (item) {
                 //โชว์ Dropdown หน้าเพิ่มและแก้ไข
@@ -311,7 +335,7 @@ $(function () {
 
                 }
                 //รายการหน้าโชว์หน้าเพิ่มและแก้ไข
-                if (item.dataField != "create_date" && item.dataField != "create_by_user_id" && item.dataField != "update_date" && item.dataField != "update_by_user_id" && item.dataField != "history") {
+                if (item.dataField != "create_date" && item.dataField != "create_by_user_id" && item.dataField != "update_date" && item.dataField != "update_by_user_id" && item.dataField != "history" && item.dataField != "group_update") {
                     itemEditing.push({
                         colSpan: item.colSpan,
                         dataField: item.dataField,
@@ -391,10 +415,12 @@ $(function () {
                 var d2 = parseJsonDate(data[i].lmr_start);
                 data[i].lmr_start = d2;
             }
-            //console.log(data);
+            console.log(data);
+
             dataGrid.option('dataSource', data);
         }
     });
+
 
     function getDataLmr() {
         return $.ajax({
@@ -444,6 +470,7 @@ $(function () {
         var boolUpdate = false;
         newData.lmr_id = keyItem;
         newData.IdTable = gbTableId;
+        newData.update_group = IsCheckBoxSelect;
         $.ajax({
             type: "POST",
             url: "../Home/UpdateLmr",

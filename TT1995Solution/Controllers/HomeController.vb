@@ -475,20 +475,20 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetTax() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT t.tax_id,t.tax_expire,t.tax_startdate,t.tax_rate,t.tax_status,l.number_car, l.license_car, l.license_id, t.special_expenses_1, t.special_expenses_2, t.contract_wages,N'ประวัติ' as history,t.note, t.group_update FROM tax as t join license as l on t.license_id = l.license_id order by LEN(l.number_car),l.number_car"
+            Dim _SQL As String = "SELECT t.tax_id,t.tax_expire,t.tax_startdate,t.tax_rate,t.tax_status,l.number_car, l.license_car, l.license_id, t.special_expenses_1, t.special_expenses_2, t.contract_wages,N'ประวัติ' as history,t.note,FORMAT(tax_expire,'MMM') as group_update FROM tax as t join license as l on t.license_id = l.license_id order by LEN(l.number_car),l.number_car"
             Dim DtLicense As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtLicense.Rows Select DtLicense.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function UpdateTax(ByVal tax_id As String, ByVal tax_expire As String, ByVal tax_rate As String, ByVal tax_startdate As String, ByVal tax_status As String, ByVal special_expenses_1 As String, ByVal special_expenses_2 As String, ByVal contract_wages As String, ByVal IdTable As String, ByVal note As String, ByVal group_update As String) As String
+        Public Function UpdateTax(ByVal tax_id As String, ByVal tax_expire As String, ByVal tax_rate As String, ByVal tax_startdate As String, ByVal tax_status As String, ByVal special_expenses_1 As String, ByVal special_expenses_2 As String, ByVal contract_wages As String, ByVal IdTable As String, ByVal note As String, ByVal update_group As String()) As String
 
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [tax] SET "
-            Dim StrTbTax() As String = {"tax_expire", "tax_rate", "tax_startdate", "tax_status", "special_expenses_1", "special_expenses_2", "contract_wages", "note", "group_update"}
-            Dim TbTax() As Object = {tax_expire, tax_rate, tax_startdate, tax_status, special_expenses_1, special_expenses_2, contract_wages, note, group_update}
+            Dim StrTbTax() As String = {"tax_expire", "tax_rate", "tax_startdate", "tax_status", "special_expenses_1", "special_expenses_2", "contract_wages", "note"}
+            Dim TbTax() As Object = {tax_expire, tax_rate, tax_startdate, tax_status, special_expenses_1, special_expenses_2, contract_wages, note}
             For n As Integer = 0 To TbTax.Length - 1
                 If Not TbTax(n) Is Nothing Then
                     _SQL &= StrTbTax(n) & "=N'" & TbTax(n) & "',"
@@ -508,8 +508,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not tax_status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("tax", tax_status, "tax_status", tax_id, "tax_id"))
+                If Not tax_status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("tax", tax_status, "tax_status", tax_id, "tax_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -1206,7 +1206,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetLmr() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT lmr_path, lmr_id, lmr_number, lmr_expire, lmr_start, country_code, benefit, lmr_status, note, N'ประวัติ' as history, group_update FROM license_mekong_river"
+            Dim _SQL As String = "SELECT lmr_path, lmr_id, lmr_number, lmr_expire, lmr_start, country_code, benefit, lmr_status, note, N'ประวัติ' as history,FORMAT(lmr_expire,'MMM') as group_update FROM license_mekong_river"
             Dim DtLmr As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtLmr.Rows Select DtLmr.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
@@ -1220,13 +1220,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtDriver.Rows Select DtDriver.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function UpdateLmr(ByVal lmr_id As String, ByVal lmr_number As String, ByVal lmr_expire As String, ByVal lmr_start As String, ByVal lmr_path As String, ByVal country_code As String, ByVal benefit As String, ByVal lmr_status As String, ByVal note As String, ByVal IdTable As String, ByVal group_update As String) As String
+        Public Function UpdateLmr(ByVal lmr_id As String, ByVal lmr_number As String, ByVal lmr_expire As String, ByVal lmr_start As String, ByVal lmr_path As String, ByVal country_code As String, ByVal benefit As String, ByVal lmr_status As String, ByVal note As String, ByVal IdTable As String, ByVal update_group As String()) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [license_mekong_river] SET "
-            Dim StrTbLc() As String = {"lmr_number", "lmr_expire", "lmr_start", "lmr_path", "country_code", "benefit", "lmr_status", "note", "group_update"}
-            Dim TbLc() As Object = {lmr_number, lmr_expire, lmr_start, lmr_path, country_code, benefit, lmr_status, note, group_update}
+            Dim StrTbLc() As String = {"lmr_number", "lmr_expire", "lmr_start", "lmr_path", "country_code", "benefit", "lmr_status", "note"}
+            Dim TbLc() As Object = {lmr_number, lmr_expire, lmr_start, lmr_path, country_code, benefit, lmr_status, note}
             For n As Integer = 0 To TbLc.Length - 1
                 If Not TbLc(n) Is Nothing Then
                     _SQL &= StrTbLc(n) & "=N'" & TbLc(n) & "',"
@@ -1246,8 +1246,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not lmr_status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("license_mekong_river", lmr_status, "lmr_status", lmr_id, "lmr_id"))
+                If Not lmr_status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("license_mekong_river", lmr_status, "lmr_status", lmr_id, "lmr_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -1256,13 +1256,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function InsertLmr(ByVal lmr_number As String, ByVal lmr_expire As DateTime, ByVal lmr_start As DateTime, ByVal country_code As String, ByVal benefit As String, ByVal lmr_status As String, ByVal note As String, ByVal IdTable As String, ByVal group_update As String) As String
+        Public Function InsertLmr(ByVal lmr_number As String, ByVal lmr_expire As DateTime, ByVal lmr_start As DateTime, ByVal country_code As String, ByVal benefit As String, ByVal lmr_status As String, ByVal note As String, ByVal IdTable As String) As String
 
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO license_mekong_river (lmr_number, lmr_expire, lmr_start, country_code, benefit, lmr_status, note, create_by_user_id, group_update) OUTPUT Inserted.lmr_id VALUES "
-            _SQL &= "(N'" & lmr_number & "', '" & lmr_expire & "', '" & lmr_start & "', N'" & country_code & "', N'" & benefit & "', N'" & lmr_status & "', N'" & note & "', '" & Session("UserId") & "',N'" & group_update & "')"
+            Dim _SQL As String = "INSERT INTO license_mekong_river (lmr_number, lmr_expire, lmr_start, country_code, benefit, lmr_status, note, create_by_user_id) OUTPUT Inserted.lmr_id VALUES "
+            _SQL &= "(N'" & lmr_number & "', '" & lmr_expire & "', '" & lmr_start & "', N'" & country_code & "', N'" & benefit & "', N'" & lmr_status & "', N'" & note & "', '" & Session("UserId") & "')"
             If Not lmr_number Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
                 If DtJson.Rows(0).Item("Status").ToString <> "0" Then
@@ -1422,7 +1422,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetLc() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT lc_path, lc_id, lc_number, lc_expire, lc_start, country_code, benefit, lc_status, note ,N'ประวัติ' as history,group_update FROM license_cambodia"
+            Dim _SQL As String = "SELECT lc_path, lc_id, lc_number, lc_expire, lc_start, country_code, benefit, lc_status, note ,N'ประวัติ' as history FROM license_cambodia"
             Dim DtLc As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtLc.Rows Select DtLc.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
@@ -1436,13 +1436,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtDriver.Rows Select DtDriver.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function UpdateLc(ByVal lc_id As String, ByVal lc_number As String, ByVal lc_expire As String, ByVal lc_start As String, ByVal lc_path As String, ByVal country_code As String, ByVal benefit As String, ByVal lc_status As String, ByVal note As String, ByVal IdTable As String, ByVal group_update As String) As String
+        Public Function UpdateLc(ByVal lc_id As String, ByVal lc_number As String, ByVal lc_expire As String, ByVal lc_start As String, ByVal lc_path As String, ByVal country_code As String, ByVal benefit As String, ByVal lc_status As String, ByVal note As String, ByVal IdTable As String) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [license_cambodia] SET "
-            Dim StrTbLc() As String = {"lc_number", "lc_expire", "lc_start", "lc_path", "country_code", "benefit", "lc_status", "note", "group_update"}
-            Dim TbLc() As Object = {lc_number, lc_expire, lc_start, lc_path, country_code, benefit, lc_status, note, group_update}
+            Dim StrTbLc() As String = {"lc_number", "lc_expire", "lc_start", "lc_path", "country_code", "benefit", "lc_status", "note"}
+            Dim TbLc() As Object = {lc_number, lc_expire, lc_start, lc_path, country_code, benefit, lc_status, note}
             For n As Integer = 0 To TbLc.Length - 1
                 If Not TbLc(n) Is Nothing Then
                     _SQL &= StrTbLc(n) & "=N'" & TbLc(n) & "',"
@@ -1461,10 +1461,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         GbFn.KeepLog(StrTbLc(n), TbLc(n), "Editing", IdTable, lc_id)
                     End If
                 Next
-                'Group Update
-                If Not lc_status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("license_cambodia", lc_status, "lc_status", lc_id, "lc_id"))
-                End If
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -1472,13 +1468,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function InsertLc(ByVal lc_number As String, ByVal lc_expire As String, ByVal lc_start As String, ByVal country_code As String, ByVal benefit As String, ByVal lc_status As String, ByVal note As String, ByVal IdTable As String, ByVal group_update As String) As String
+        Public Function InsertLc(ByVal lc_number As String, ByVal lc_expire As String, ByVal lc_start As String, ByVal country_code As String, ByVal benefit As String, ByVal lc_status As String, ByVal note As String, ByVal IdTable As String) As String
 
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO license_cambodia (lc_number, lc_expire, lc_start, country_code, benefit, lc_status, note, create_by_user_id,group_update) OUTPUT Inserted.lc_id VALUES "
-            _SQL &= "(N'" & lc_number & "', '" & lc_expire & "', '" & lc_start & "', N'" & country_code & "', N'" & benefit & "', N'" & lc_status & "',N'" & note & "', '" & Session("UserId") & "',N'" & group_update & "')"
+            Dim _SQL As String = "INSERT INTO license_cambodia (lc_number, lc_expire, lc_start, country_code, benefit, lc_status, note, create_by_user_id) OUTPUT Inserted.lc_id VALUES "
+            _SQL &= "(N'" & lc_number & "', '" & lc_expire & "', '" & lc_start & "', N'" & country_code & "', N'" & benefit & "', N'" & lc_status & "',N'" & note & "', '" & Session("UserId") & "')"
             If Not lc_number Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
                 If DtJson.Rows(0).Item("Status").ToString <> "0" Then
@@ -2322,19 +2318,19 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetLv8() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT lv8.*,N'ประวัติ' as history, l.license_car FROM license_v8 as lv8 join license as l on lv8.license_id = l.license_id order by LEN(l.number_car),l.number_car"
+            Dim _SQL As String = "SELECT lv8.*,N'ประวัติ' as history, l.license_car,FORMAT(lv8_expire,'MMM') as group_update FROM license_v8 as lv8 join license as l on lv8.license_id = l.license_id order by LEN(l.number_car),l.number_car"
             Dim DtLmr As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtLmr.Rows Select DtLmr.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function UpdateLv8(ByVal license_id As String, ByVal ownership As String, ByVal tax_Id As String, ByVal lv8_mpa As String, ByVal lv8_rd As String, ByVal lv8_id As String, ByVal lv8_number As String, ByVal lv8_expire As String, ByVal lv8_start As String, ByVal lv8_status As String, ByVal name_hazmat1 As String, ByVal name_hazmat2 As String, ByVal name_hazmat3 As String, ByVal name_hazmat4 As String, ByVal name_hazmat5 As String, ByVal name_hazmat6 As String, ByVal IdTable As String, ByVal note As String, ByVal group_update As String) As String
+        Public Function UpdateLv8(ByVal license_id As String, ByVal ownership As String, ByVal tax_Id As String, ByVal lv8_mpa As String, ByVal lv8_rd As String, ByVal lv8_id As String, ByVal lv8_number As String, ByVal lv8_expire As String, ByVal lv8_start As String, ByVal lv8_status As String, ByVal name_hazmat1 As String, ByVal name_hazmat2 As String, ByVal name_hazmat3 As String, ByVal name_hazmat4 As String, ByVal name_hazmat5 As String, ByVal name_hazmat6 As String, ByVal IdTable As String, ByVal note As String, ByVal update_group As String()) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [license_v8] SET "
-            Dim StrTbLc() As String = {"lv8_number", "license_id", "ownership", "tax_Id", "lv8_start", "lv8_expire", "lv8_mpa", "lv8_rd", "lv8_status", "name_hazmat1", "name_hazmat2", "name_hazmat3", "name_hazmat4", "name_hazmat5", "name_hazmat6", "note", "group_update"}
-            Dim TbLc() As Object = {lv8_number, license_id, ownership, tax_Id, lv8_start, lv8_expire, lv8_mpa, lv8_rd, lv8_status, name_hazmat1, name_hazmat2, name_hazmat3, name_hazmat4, name_hazmat5, name_hazmat6, note, group_update}
+            Dim StrTbLc() As String = {"lv8_number", "license_id", "ownership", "tax_Id", "lv8_start", "lv8_expire", "lv8_mpa", "lv8_rd", "lv8_status", "name_hazmat1", "name_hazmat2", "name_hazmat3", "name_hazmat4", "name_hazmat5", "name_hazmat6", "note"}
+            Dim TbLc() As Object = {lv8_number, license_id, ownership, tax_Id, lv8_start, lv8_expire, lv8_mpa, lv8_rd, lv8_status, name_hazmat1, name_hazmat2, name_hazmat3, name_hazmat4, name_hazmat5, name_hazmat6, note}
             For n As Integer = 0 To TbLc.Length - 1
                 If Not TbLc(n) Is Nothing Then
                     _SQL &= StrTbLc(n) & "=N'" & TbLc(n) & "',"
@@ -2355,8 +2351,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not lv8_status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("license_v8", lv8_status, "lv8_status", lv8_id, "lv8_id"))
+                If Not lv8_status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("license_v8", lv8_status, "lv8_status", lv8_id, "lv8_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -2365,13 +2361,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function InsertLv8(ByVal license_id As String, ByVal ownership As String, ByVal tax_Id As String, ByVal lv8_mpa As String, ByVal lv8_rd As String, ByVal lv8_number As String, ByVal lv8_expire As DateTime, ByVal lv8_start As DateTime, ByVal lv8_status As String, ByVal IdTable As String, ByVal note As String, ByVal group_update As String) As String
+        Public Function InsertLv8(ByVal license_id As String, ByVal ownership As String, ByVal tax_Id As String, ByVal lv8_mpa As String, ByVal lv8_rd As String, ByVal lv8_number As String, ByVal lv8_expire As DateTime, ByVal lv8_start As DateTime, ByVal lv8_status As String, ByVal IdTable As String, ByVal note As String) As String
 
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim _SQL As String = "INSERT INTO license_v8 ([lv8_number],[license_id],[ownership],[tax_Id],[lv8_start],[lv8_expire],[lv8_mpa],[lv8_rd],[lv8_status],[note],[create_by_user_id],[group_update]) OUTPUT Inserted.lv8_id VALUES "
-            _SQL &= "(N'" & lv8_number & "', '" & license_id & "', N'" & ownership & "', N'" & tax_Id & "', '" & lv8_start & "', '" & lv8_expire & "', N'" & lv8_mpa & "', N'" & lv8_rd & "', N'" & lv8_status & "', N'" & note & "', '" & Session("UserId") & "', N'" & group_update & "' )"
+            _SQL &= "(N'" & lv8_number & "', '" & license_id & "', N'" & ownership & "', N'" & tax_Id & "', '" & lv8_start & "', '" & lv8_expire & "', N'" & lv8_mpa & "', N'" & lv8_rd & "', N'" & lv8_status & "', N'" & note & "', '" & Session("UserId") & "' )"
             If Not license_id Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
             Else
@@ -2551,7 +2547,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         'Get data of table act_insurance
         Public Function GetMIData() As String
-            Return GbFn.GetData("SELECT *,N'ประวัติ' as history FROM [dbo].[main_insurance] mi , [dbo].[license] li where mi.license_id = li.license_id order by LEN(li.number_car),li.number_car")
+            Return GbFn.GetData("SELECT *,N'ประวัติ' as history, FORMAT(end_date,'MMM') as group_update FROM [dbo].[main_insurance] mi , [dbo].[license] li where mi.license_id = li.license_id order by LEN(li.number_car),li.number_car")
         End Function
 
         'Rename Folder or Files(pic,pdf)
@@ -2560,13 +2556,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
         End Function
 
         Public Function UpdateMI(ByVal number_car As String, ByVal insurance_company As String, ByVal start_date As String, ByVal end_date As String, ByVal note As String _
-                                  , ByVal policy_number As String, ByVal assured As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal status As String, ByVal key As String, ByVal IdTable As String, ByVal group_update As String) As String
+                                  , ByVal policy_number As String, ByVal assured As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal status As String, ByVal key As String, ByVal IdTable As String, ByVal update_group As String()) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [main_insurance] SET "
-            Dim StrTbAI() As String = {"insurance_company", "start_date", "end_date", "note", "policy_number", "assured", "current_cowrie", "previous_cowrie", "status", "group_update"}
-            Dim TbAI() As Object = {insurance_company, start_date, end_date, note, policy_number, assured, current_cowrie, previous_cowrie, status, group_update}
+            Dim StrTbAI() As String = {"insurance_company", "start_date", "end_date", "note", "policy_number", "assured", "current_cowrie", "previous_cowrie", "status"}
+            Dim TbAI() As Object = {insurance_company, start_date, end_date, note, policy_number, assured, current_cowrie, previous_cowrie, status}
             For n As Integer = 0 To TbAI.Length - 1
                 If Not TbAI(n) Is Nothing Then
                     _SQL &= StrTbAI(n) & "=N'" & TbAI(n) & "',"
@@ -2586,8 +2582,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("main_insurance", status, "status", key, "mi_id"))
+                If Not status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("main_insurance", status, "status", key, "mi_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -2596,7 +2592,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
         Public Function InsertMI(ByVal number_car As String, ByVal insurance_company As String, ByVal start_date As String, ByVal end_date As String, ByVal note As String _
-                                  , ByVal policy_number As String, ByVal assured As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal status As String, ByVal key As String, ByVal IdTable As String, ByVal group_update As String) As String
+                                  , ByVal policy_number As String, ByVal assured As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal status As String, ByVal key As String, ByVal IdTable As String) As String
 
             Dim DtJson As DataTable = New DataTable
 
@@ -2615,8 +2611,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(status Is Nothing, String.Empty, status) & "',"
             _SQL &= "N'" & IIf(note Is Nothing, String.Empty, note) & "',"
             _SQL &= "getdate(),"
-            _SQL &= Session("UserId") & ","
-            _SQL &= "N'" & group_update & "')"
+            _SQL &= Session("UserId") & "')"
 
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
@@ -2664,7 +2659,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         'Get data of table act_insurance
         Public Function GetDPIData() As String
-            Return GbFn.GetData("SELECT *,N'ประวัติ' as history,N'View' as first_damages_view FROM [dbo].[domestic_product_insurance] dpi , [dbo].[license] li where dpi.license_id = li.license_id order by LEN(li.number_car),li.number_car")
+            Return GbFn.GetData("SELECT *,N'ประวัติ' as history,N'View' as first_damages_view, FORMAT(end_date,'MMM') as group_update FROM [dbo].[domestic_product_insurance] dpi , [dbo].[license] li where dpi.license_id = li.license_id order by LEN(li.number_car),li.number_car")
         End Function
 
         'Rename Folder or Files(pic,pdf)
@@ -2673,13 +2668,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
         End Function
 
         Public Function UpdateDPI(ByVal number_car As String, ByVal insurance_company As String, ByVal policy_number As String, ByVal start_date As String, ByVal end_date As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal note As String _
-                                  , ByVal status As String, ByVal first_damages As String, ByVal key As String, ByVal IdTable As String, ByVal group_update As String) As String
+                                  , ByVal status As String, ByVal first_damages As String, ByVal key As String, ByVal IdTable As String, ByVal update_group As String()) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [domestic_product_insurance] SET "
-            Dim StrTbDPI() As String = {"insurance_company", "policy_number", "start_date", "end_date", "current_cowrie", "previous_cowrie", "note", "status", "first_damages", "group_update"}
-            Dim TbDPI() As Object = {insurance_company, policy_number, start_date, end_date, current_cowrie, previous_cowrie, note, status, first_damages, group_update}
+            Dim StrTbDPI() As String = {"insurance_company", "policy_number", "start_date", "end_date", "current_cowrie", "previous_cowrie", "note", "status", "first_damages"}
+            Dim TbDPI() As Object = {insurance_company, policy_number, start_date, end_date, current_cowrie, previous_cowrie, note, status, first_damages}
             For n As Integer = 0 To TbDPI.Length - 1
                 If Not TbDPI(n) Is Nothing Then
                     _SQL &= StrTbDPI(n) & "=N'" & TbDPI(n) & "',"
@@ -2699,8 +2694,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("domestic_product_insurance", status, "status", key, "dpi_id"))
+                If Not status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("domestic_product_insurance", status, "status", key, "dpi_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -2709,14 +2704,14 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
         Public Function InsertDPI(ByVal number_car As String, ByVal insurance_company As String, ByVal policy_number As String, ByVal start_date As String, ByVal end_date As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal note As String _
-                                  , ByVal status As String, ByVal first_damages As String, ByVal key As String, ByVal IdTable As String, ByVal group_update As String) As String
+                                  , ByVal status As String, ByVal first_damages As String, ByVal key As String, ByVal IdTable As String) As String
 
             Dim DtJson As DataTable = New DataTable
 
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim license_id As Integer = objDB.SelectSQL("SELECT * FROM [dbo].[license] where number_car = '" & number_car & "'", cn).Rows(0).Item("license_id")
-            Dim _SQL As String = "INSERT INTO [domestic_product_insurance] ([license_id],[insurance_company],[policy_number],[start_date],[end_date],[current_cowrie],[previous_cowrie],[note],[status],[first_damages],[create_date],[create_by_user_id],[group_update]) OUTPUT Inserted.dpi_id"
+            Dim _SQL As String = "INSERT INTO [domestic_product_insurance] ([license_id],[insurance_company],[policy_number],[start_date],[end_date],[current_cowrie],[previous_cowrie],[note],[status],[first_damages],[create_date],[create_by_user_id]) OUTPUT Inserted.dpi_id"
             _SQL &= " VALUES (" & IIf(license_id.ToString Is Nothing, 0, license_id.ToString) & ","
             _SQL &= "N'" & IIf(insurance_company Is Nothing, String.Empty, insurance_company) & "',"
             _SQL &= "N'" & IIf(policy_number Is Nothing, String.Empty, policy_number) & "',"
@@ -2728,8 +2723,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(status Is Nothing, String.Empty, status) & "',"
             _SQL &= "N'" & IIf(first_damages Is Nothing, String.Empty, first_damages) & "',"
             _SQL &= "getdate(),"
-            _SQL &= Session("UserId") & ","
-            _SQL &= "N'" & group_update & "')"
+            _SQL &= Session("UserId") & "')"
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
             Else
@@ -2793,7 +2787,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         'Get data of table act_insurance
         Public Function GetAIData() As String
-            Return GbFn.GetData("SELECT *,N'ประวัติ' as history FROM [dbo].[act_insurance] ai , [dbo].[license] li where ai.license_id = li.license_id order by LEN(li.number_car),li.number_car ")
+            Return GbFn.GetData("SELECT *,N'ประวัติ' as history, FORMAT(end_date,'MMM') as group_update FROM [dbo].[act_insurance] ai , [dbo].[license] li where ai.license_id = li.license_id order by LEN(li.number_car),li.number_car ")
         End Function
 
         'Rename Folder or Files(pic,pdf)
@@ -2803,13 +2797,13 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function UpdateAI(ByVal number_car As String, ByVal insurance_company As String, ByVal start_date As String, ByVal end_date As String, ByVal note As String _
                                   , ByVal status As String, ByVal price As String, ByVal policy_number As String, ByVal first_damages As String, ByVal add_damages As String _
-                                  , ByVal key As String, ByVal IdTable As String, ByVal group_update As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal type As String) As String
+                                  , ByVal key As String, ByVal IdTable As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal type As String, ByVal update_group As String()) As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [act_insurance] SET "
-            Dim StrTbAI() As String = {"insurance_company", "start_date", "end_date", "note", "status", "price", "policy_number", "first_damages", "add_damages", "group_update", "current_cowrie", "previous_cowrie", "type"}
-            Dim TbAI() As Object = {insurance_company, start_date, end_date, note, status, price, policy_number, first_damages, add_damages, group_update, current_cowrie, previous_cowrie, type}
+            Dim StrTbAI() As String = {"insurance_company", "start_date", "end_date", "note", "status", "price", "policy_number", "first_damages", "add_damages", "current_cowrie", "previous_cowrie", "type"}
+            Dim TbAI() As Object = {insurance_company, start_date, end_date, note, status, price, policy_number, first_damages, add_damages, current_cowrie, previous_cowrie, type}
             For n As Integer = 0 To TbAI.Length - 1
                 If Not TbAI(n) Is Nothing Then
                     _SQL &= StrTbAI(n) & "=N'" & TbAI(n) & "',"
@@ -2829,8 +2823,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                     End If
                 Next
                 'Group Update
-                If Not status Is Nothing Then
-                    DtJson.Rows.Add(group_update_("act_insurance", status, "status", key, "ai_id"))
+                If Not status Is Nothing And Not update_group Is Nothing Then
+                    DtJson.Rows.Add(group_update("act_insurance", status, "status", key, "ai_id", update_group))
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -3689,6 +3683,76 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Next
             Return SqlForUpdate
         End Function
+
+        'Public Function group_update_(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String)
+        '    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+        '    Dim _Sql As String = "select group_update from " & TableName & " where " & NameColumnId & " = '" & id & "'"
+        '    Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
+        '    'NO Group 
+        '    If IsDBNull(Dt.Rows(0).Item("group_update")) Or Dt.Rows(0).Item("group_update") = "" Then
+        '        If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
+        '            _Sql = "UPDATE " & TableName & " SET current_cowrie = 0, previous_cowrie = (select current_cowrie from " & TableName & " where " & NameColumnId & " = " & id & "), flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "'  where " & NameColumnId & " = " & id
+        '            If objDB.ExecuteSQL(_Sql, cn) Then
+        '                Return 1
+        '            Else
+        '                Return 0
+        '            End If
+        '        Else
+        '            Return 1
+        '        End If
+        '    Else 'Group
+        '        _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where group_update = '" & Dt.Rows(0).Item("group_update") & "'"
+        '        If objDB.ExecuteSQL(_Sql, cn) Then
+        '            If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
+        '                Return cowrie_update(TableName, Dt.Rows(0).Item("group_update"), NameColumnId)
+        '            Else
+        '                Return 1
+        '            End If
+        '        Else
+        '            Return 0
+        '        End If
+        '    End If
+        'End Function
+
+        Public Function group_update(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String, ByVal update_group As String())
+
+            Dim WhereIn As String = ""
+
+            For i As Integer = 0 To update_group.Length - 1
+                WhereIn = WhereIn + "'" & update_group(i).ToString & "',"
+            Next
+
+            WhereIn = WhereIn + "'" & id & "'"
+
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _Sql As String = ""
+            _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where " & NameColumnId & " in (" & WhereIn & ")"
+            If objDB.ExecuteSQL(_Sql, cn) Then
+                If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
+                    Return cowrie_update(TableName, WhereIn, NameColumnId)
+                Else
+                    Return 1
+                End If
+            Else
+                Return 0
+            End If
+        End Function
+
+        Public Function cowrie_update(ByVal TableName As String, ByVal WhereIn As String, ByVal NameColumnId As String)
+            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+            Dim _Sql As String = "select * from " & TableName & " where " & NameColumnId & " in (" & WhereIn & ")"
+            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
+            For i As Integer = 0 To Dt.Rows.Count - 1
+                _Sql = "UPDATE " & TableName & " SET current_cowrie = 0,previous_cowrie = '" & Dt.Rows(i).Item("current_cowrie") & "'  where " & NameColumnId & " = '" & Dt.Rows(i).Item(NameColumnId) & "'"
+
+                If objDB.ExecuteSQL(_Sql, cn) Then
+
+                Else
+                    Return 0
+                End If
+            Next
+            Return 1
+        End Function
 #End Region
 
 #Region "Driving License"
@@ -3966,51 +4030,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 DtJson.Rows.Add("0")
             End Try
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
-        End Function
-
-        Public Function group_update_(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String)
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _Sql As String = "select group_update from " & TableName & " where " & NameColumnId & " = '" & id & "'"
-            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
-            'NO Group 
-            If IsDBNull(Dt.Rows(0).Item("group_update")) Or Dt.Rows(0).Item("group_update") = "" Then
-                If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
-                    _Sql = "UPDATE " & TableName & " SET current_cowrie = 0, previous_cowrie = (select current_cowrie from " & TableName & " where " & NameColumnId & " = " & id & "), flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "'  where " & NameColumnId & " = " & id
-                    If objDB.ExecuteSQL(_Sql, cn) Then
-                        Return 1
-                    Else
-                        Return 0
-                    End If
-                Else
-                    Return 1
-                End If
-            Else 'Group
-                _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where group_update = '" & Dt.Rows(0).Item("group_update") & "'"
-                If objDB.ExecuteSQL(_Sql, cn) Then
-                    If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
-                        Return cowrie_update(TableName, Dt.Rows(0).Item("group_update"), NameColumnId)
-                    Else
-                        Return 1
-                    End If
-                Else
-                    Return 0
-                End If
-            End If
-        End Function
-
-        Public Function cowrie_update(ByVal TableName As String, ByVal group_update As String, ByVal NameColumnId As String)
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _Sql As String = "select * from " & TableName & " where group_update =N'" & group_update & "'"
-            Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
-            For i As Integer = 0 To Dt.Rows.Count - 1
-                _Sql = "UPDATE " & TableName & " SET current_cowrie = 0,previous_cowrie = " & Dt.Rows(i).Item("current_cowrie") & "  where " & NameColumnId & " = '" & Dt.Rows(i).Item(NameColumnId) & "'"
-                If objDB.ExecuteSQL(_Sql, cn) Then
-
-                Else
-                    Return 0
-                End If
-            Next
-            Return 1
         End Function
 
         Public Function GetTabianNameJoinTable(ByVal TableName As String) As String
