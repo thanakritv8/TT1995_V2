@@ -13,10 +13,14 @@ End Code
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     background-color: #00c43e;
 }
+.tab-pane {
+    background-color: #fff;
+    padding: 10px;
+}
 </style>
 <div class="header">แดชบอร์ด</div>
 <div class="container-fluid">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-tabs mb-4" id="pills-tab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="pills-fleet-tabien-tab" data-toggle="pill" href="#pills-fleet-tabien" role="tab" aria-controls="pills-home" aria-selected="true">Fleet Tabien</a>
         </li>
@@ -32,7 +36,7 @@ End Code
             </div>
         </li>
     </ul>
-    <div class="tab-content" id="pills-tabContent">
+    <div class="tab-content mt-4 mb-4" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-fleet-tabien" role="tabpanel" aria-labelledby="pills-fleet-tabien-tab">
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 mt-3">
