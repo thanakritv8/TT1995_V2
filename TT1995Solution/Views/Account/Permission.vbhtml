@@ -8,7 +8,9 @@ End Code
 </style>
 <div class="header">กำหนดสิทธิ์การใช้งาน</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+    </div>
 </div>
 <div id="popup_history"></div>
 <script>

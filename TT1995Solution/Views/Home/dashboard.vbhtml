@@ -16,6 +16,7 @@ End Code
 .tab-pane {
     background-color: #fff;
     padding: 10px;
+    box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.2);
 }
 </style>
 <div class="header">แดชบอร์ด</div>

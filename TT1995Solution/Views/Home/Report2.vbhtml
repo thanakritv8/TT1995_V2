@@ -4,18 +4,19 @@ End Code
 
 <div class="header">เอกสาร หนังสือมอบอำนาจ</div>
 <div class="container-fluid">
-
-    <div class="row">
-        <div class="col-12">
-            <div id="newRowButton" style="float: right"></div>
+    <div class="wrapper-data">
+        <div class="row">
+            <div class="col-12">
+                <div id="newRowButton" style="float: right"></div>
+            </div>
         </div>
-    </div>
-    <div>
-        <div class="mt-3 mb-3" id="gridContainer"></div>
-        <div id="context-menu"></div>
-    </div>
-    <div class="widget-container">
-        <div id="popup"></div>
+        <div>
+            <div class="mt-3 mb-3" id="gridContainer"></div>
+            <div id="context-menu"></div>
+        </div>
+        <div class="widget-container">
+            <div id="popup"></div>
+        </div>
     </div>
 </div>
 <style>

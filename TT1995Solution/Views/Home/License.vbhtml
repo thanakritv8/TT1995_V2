@@ -38,6 +38,7 @@ End Code
     .tab-pane {
         background-color: #fff;
         padding: 10px;
+        box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.2);
     }
 
     .selected-item {
@@ -74,11 +75,11 @@ End Code
             <a class="nav-link active" id="license_tab" data-toggle="tab" href="#license" role="tab" aria-controls="license" aria-selected="true">เล่มทะเบียน</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="license_not_complete_tab" data-toggle="tab" href="#license_not_complete" role="tab" aria-controls="license_not_complete" aria-selected="false">รถที่อัปโหลดรูปไม่ครบ <span id="total_product_customer" class="badge badge-danger">0</span></a>
+            <a class="nav-link" id="license_not_complete_tab" data-toggle="tab" href="#license_not_complete" role="tab" aria-controls="license_not_complete" aria-selected="false">รถที่อัปโหลดรูปไม่ครบ <span id="total_product_customer" class="badge badge-danger" style="font-size: 12px; letter-spacing: 1px;">0</span></a>
         </li>
-        <li class="nav-item">
+        <!--<li class="nav-item">
             <a class="nav-link" id="product_customer_tab" data-toggle="tab" href="#product_customer" role="tab" aria-controls="product_customer" aria-selected="false">รถที่ยังไม่ได้อัปโหลดรูป <span id="total_product_customer" class="badge badge-danger">0</span></a>
-        </li>
+        </li>-->
     </ul>
 
     <div class="tab-content mt-4" id="myTabContent">

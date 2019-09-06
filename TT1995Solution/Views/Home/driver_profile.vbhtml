@@ -6,31 +6,33 @@ End Code
         width: 100%;
     }
 </style>
-<div> <h4>โปรไฟล์ พขร.</h4> </div>
-<div>
-    <div class="mt-3 mb-3" id="gridContainer"></div>
+<div class="header">โปรไฟล์ พขร.</div>
+<div class="container-fluid">
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+    </div>
 </div>
 
-<div id="popup_history"></div>
-<script>
-    //Control Read Only and Read Write
-    var boolStatus = false;
-    var permission_status = '@Session("37")'; //1 = Read Only, 2 = Read and Write
-    if (permission_status == 1) {
-        boolStatus = false;
-        //$("#context-menu").hide();
-    } else {
-        boolStatus = true;
-        //$("#context-menu").show();
-    }
-    console.log(!boolStatus);
-    //End Control
+    <div id="popup_history"></div>
+    <script>
+        //Control Read Only and Read Write
+        var boolStatus = false;
+        var permission_status = '@Session("37")'; //1 = Read Only, 2 = Read and Write
+        if (permission_status == 1) {
+            boolStatus = false;
+            //$("#context-menu").hide();
+        } else {
+            boolStatus = true;
+            //$("#context-menu").show();
+        }
+        console.log(!boolStatus);
+        //End Control
 
-    $(".toggle-driver").next().toggle();
-    $(".toggle-driver").click(function (e) {
-        e.stopPropagation();
         $(".toggle-driver").next().toggle();
-    });
-</script>
-<script src="~/scripts/Home/driver_profile.js"></script>
+        $(".toggle-driver").click(function (e) {
+            e.stopPropagation();
+            $(".toggle-driver").next().toggle();
+        });
+    </script>
+    <script src="~/scripts/Home/driver_profile.js"></script>
 

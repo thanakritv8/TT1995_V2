@@ -183,7 +183,7 @@ var show_column = [
         },
         {
             dataField: "id",
-            caption: "",
+            caption: "เครื่องมือ",
             fixed: true,
             allowEditing: false,
             cellTemplate: function (container, options) {

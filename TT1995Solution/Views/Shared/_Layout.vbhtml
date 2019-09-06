@@ -45,7 +45,8 @@
             width: 15px;
         }
         .dx-toolbar {
-            background-color: #f8f9fc;
+            /*background-color: #f8f9fc;*/
+            background-color: #fff;
         }
         .dropdown-item {
             white-space: normal;
@@ -88,6 +89,15 @@
         }
         .nav-link {
             padding: 0.5rem 0.7rem;
+        }
+        .dx-datagrid-headers .dx-header-row {
+            background-color: #fafafa;
+        }
+        .wrapper-data {
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
         }
     </style>
 </head>

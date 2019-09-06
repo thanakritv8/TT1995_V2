@@ -138,7 +138,106 @@ $(function () {
     });
     //จบการกำหนดการแสดงรูปภาพ
 
+    //กำหนดคอลั่มของ tab รถที่ยังอัปโหลดรูปไม่ครบ
+    $.ajax({
+        type: "GET",
+        url: "../Home/GetColumnChooserLicenseNotComplete",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            /*console.log('NotComplete : ');
+            console.log(data);*/
+            var ndata = 0;
+            data.forEach(function (item) {
 
+                if (item.dataField == "show_pic") {
+
+                    data[ndata].cellTemplate = function (container, options) {
+                        //console.log(options);
+                        $('<a style="color:green;font-weight:bold;" />').addClass('dx-link')
+                                .text("ดูรูปภาพ")
+                                .on('dxclick', function (e) {
+                                    show_popup_pic(options.row.data.license_id);
+                                })
+                        .appendTo(container);
+                    }
+                }
+
+                if (item.dataField == "upload") {
+
+                    data[ndata].cellTemplate = function (container, options) {
+                        //console.log(options);
+                        $('<a style="color:green;font-weight:bold;" />').addClass('dx-link')
+                                .text('อัปโหลด')
+                                .on('dxclick', function (e) {
+                                    console.log(options);
+                                    upload_pic.reset();
+                                    $("#upload_pic #license_id").val(options.row.data.license_id);
+                                    $("#upload_pic").modal();
+                                })
+                        .appendTo(container);
+                    }
+                }
+
+                ndata++;
+                //จบการตั้งค่าโชว์ Dropdown
+            });
+            //ตัวแปร data โชว์ Column และตั้งค่า Column ไหนที่เอามาโชว์บ้าง
+            grid_not_complete.option('columns', data);
+        }
+    });
+
+    function GetLicenseNotComplete() {
+        return $.ajax({
+            type: "GET",
+            url: "http://tabien.threetrans.com/TTApi/Tabien/Report/GetLicenseNotComplete",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data.length);
+                $('#total_product_customer').html(data.length);
+            }
+        }).responseJSON;
+    }
+
+    var grid_not_complete = $("#gridNotComplete").dxDataGrid({
+        dataSource: GetLicenseNotComplete(),
+        keyExpr: "license_id",
+        paging: {
+            pageSize: 10
+        },
+        searchPanel: {
+            visible: true,
+            highlightCaseSensitive: true
+        },
+        paging: {
+            pageSize: 10
+        },
+        pager: {
+            showPageSizeSelector: true,
+            allowedPageSizes: [5, 10, 20],
+            showInfo: true
+        },
+        "export": {
+            enabled: true,
+            fileName: "LicenseNotComplete",
+        },
+        filterRow: {
+            visible: true,
+            applyFilter: "auto"
+        },
+        headerFilter: {
+            visible: true
+        },
+        showBorders: true
+    }).dxDataGrid("instance");
+
+    function UpdateGridNotComplete() {
+        grid_not_complete.option('dataSource', '');
+        grid_not_complete.refresh();
+        grid_not_complete.option('dataSource', GetLicenseNotComplete());
+        grid_not_complete.refresh();
+    }
 
     //กำหนดในส่วนของ Column ทั้งหน้าเพิ่มข้อมูลและหน้าแก้ไขข้อมูล
     $.ajax({
@@ -313,7 +412,13 @@ $(function () {
                 }
             });
         }
+        $("#upload_pic").modal('hide');
+        DevExpress.ui.notify('เพิ่มรูปภาพเรียบร้อยแล้ว', 'success');
+        UpdateGridNotComplete();
+
     }
+
+    
 
     function GetDetailLicense(license_id) {
         return $.ajax({
@@ -323,7 +428,7 @@ $(function () {
             dataType: "json",
             async: false,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
             }
         }).responseJSON;
     }

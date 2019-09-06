@@ -24,7 +24,9 @@ End Code
 </style>
 <div class="header">หน้าแรก</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+    </div>
     <script type="text/html" id="title">
         <% if(tablename == 'รูปรถ'){ %>
         <% if(data_status == 'สมบูรณ์'){ %>
