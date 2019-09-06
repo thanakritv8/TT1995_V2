@@ -14,7 +14,9 @@ End Code
 </style>
 <div class="header">ใบอนุญาตโรงงาน</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+    </div>
 </div>
 
 <div class="modal" id="mdNewFile">

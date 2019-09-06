@@ -9,8 +9,10 @@ End Code
 </style>
 <div class="header">ใบอนุญาตรถเข้าโรงงาน</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
-    <div id="context-menu"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+        <div id="context-menu"></div>
+    </div>
 </div>
 
     <!--New Folder-->

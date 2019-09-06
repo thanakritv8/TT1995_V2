@@ -9,11 +9,13 @@ End Code
 </style>
 <div class="header">การผ่อนชำระ</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
-    <div id="context-menu"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+        <div id="context-menu"></div>
 
-    <div class="widget-container">
-        <div id="popup"></div>
+        <div class="widget-container">
+            <div id="popup"></div>
+        </div>
     </div>
 </div>
 @*<div id="popup"></div>*@

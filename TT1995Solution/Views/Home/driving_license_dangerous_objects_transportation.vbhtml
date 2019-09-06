@@ -13,7 +13,9 @@ End Code
 </style>
 <div class="header">ใบอนุญาตขับขี่ขนส่งวัตถุอันตราย</div>
 <div class="container-fluid">
-    <div class="mt-3 mb-3" id="gridContainer"></div>
+    <div class="wrapper-data">
+        <div class="mt-3 mb-3" id="gridContainer"></div>
+    </div>
 </div>
 <div class="modal" id="mdNewFile">
     <div class="modal-dialog modal-dialog-centered">
