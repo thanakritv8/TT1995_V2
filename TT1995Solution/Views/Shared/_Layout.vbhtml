@@ -8,11 +8,12 @@
 
     <link href="~/Content/css/sb-admin.css" rel="stylesheet" />
     <link href="~/Content/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link href="~/Content/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="~/Content/css/jquery.steps.css" rel="stylesheet" />
     <link href="~/Content/css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    @*<link rel="stylesheet" type="text/css" href="~/Content/sb-admin.min.css" />*@
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="~/Content/js/jquery_steps/lib/jquery.cookie-1.3.1.js"></script>
     <script src="~/Content/js/jquery_steps/build/jquery.steps.js"></script>
     <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -24,12 +25,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
     <script src="~/scripts/dx/dx.all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.2/jszip.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
     <script src="~/Content/js/bootstrap-datepicker.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Kanit&display=swap" rel="stylesheet">
+    <script src="~/Scripts/sb-admin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <style>
+        * {
+            font-family: 'Kanit', sans-serif;
+        }
         .bg-custom {
             box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15)!important;
         }
@@ -54,6 +60,34 @@
             color: #fff;
             margin-bottom: 20px;
             letter-spacing: 1px;
+        }
+        .nav-tabs {
+            /*border-bottom: 2px solid #00D1B2;*/
+            border-bottom: none;
+        }
+        .nav-tabs .nav-link {
+            border-radius: 0;
+            background-color: #00C43E;
+            color: #fff;
+        }
+        .nav-tabs .nav-item {
+            margin-right: 4px;
+            margin-bottom: -2px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+            border: 1px solid #00C43E;
+        }
+        .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+            /*border-top: 3px solid;
+            border-left: 3px solid;
+            border-right: 3px solid;
+            border-color: #00D1B2 #00D1B2 #fff;*/
+            border: 3px solid #00C43E;
+        }
+        .nav-link {
+            padding: 0.5rem 0.7rem;
         }
     </style>
 </head>
@@ -275,8 +309,5 @@ End IF
             End If
         </div>
     </div>
-    <script src="~/Scripts/sb-admin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 </body>
 </html>

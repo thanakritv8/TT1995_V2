@@ -17,6 +17,7 @@ var rowIndex = 0;
 //ตัวแปรเก็บรูปภาพ
 var gallery = [];
 var gallerySelect = 0;
+var upload_pic_length = 0;
 
 //คลิกขวาโชว์รายการ
 var contextMenuItemsRoot = [
@@ -53,10 +54,10 @@ $(function () {
                 fileDataPic.append('position', $("#positionSelect").val());
             }
             fnInsertFiles(fileDataPic);
-            
+
         }
     });
-    
+
     //จบการกำหนดปุ่ม
     $("#btnNewFolder").dxButton({
         onClick: function () {
@@ -137,18 +138,21 @@ $(function () {
     });
     //จบการกำหนดการแสดงรูปภาพ
 
+
+
     //กำหนดในส่วนของ Column ทั้งหน้าเพิ่มข้อมูลและหน้าแก้ไขข้อมูล
     $.ajax({
         type: "POST",
         //url: "../Home/GetColumnChooserLicense",
         url: "../Home/GetColumnChooser", //Edit By Tew 250219
         contentType: "application/json; charset=utf-8",
-        data: "{gbTableId:"+ gbTableId +"}",
+        data: "{gbTableId:" + gbTableId + "}",
         dataType: "json",
         success: function (data) {
             var ndata = 0;
+            console.log(data);
             data.forEach(function (item) {
-                
+
                 //โชว์ Dropdown หน้าเพิ่มและแก้ไข
                 if (item.status_lookup != "0") {
                     var dataLookup;
@@ -171,6 +175,36 @@ $(function () {
                 }
 
                 //popup
+
+                if (item.dataField == "license_pic") {
+
+                    data[ndata].cellTemplate = function (container, options) {
+                        //console.log(options);
+                        $('<a style="color:green;font-weight:bold;" />').addClass('dx-link')
+                                .text("ดูรูปภาพ")
+                                .on('dxclick', function (e) {
+                                    show_popup_pic(options.value);
+                                })
+                        .appendTo(container);
+                    }
+                }
+
+                if (item.dataField == "Upload_pic") {
+
+                    data[ndata].cellTemplate = function (container, options) {
+                        //console.log(options);
+                        $('<a style="color:green;font-weight:bold;" />').addClass('dx-link')
+                                .text('อัปโหลด')
+                                .on('dxclick', function (e) {
+                                    console.log(options);
+                                    upload_pic.reset();
+                                    $("#upload_pic #license_id").val(options.row.data.license_id);
+                                    $("#upload_pic").modal();
+                                })
+                        .appendTo(container);
+                    }
+                }
+
                 if (item.dataField == "history") {
                     data[ndata].cellTemplate = function (container, options) {
                         $('<a style="color:green;font-weight:bold;" />').addClass('dx-link')
@@ -218,7 +252,7 @@ $(function () {
 
                 ndata++;
                 //จบการตั้งค่าโชว์ Dropdown
-                
+
                 //รายการหน้าโชว์หน้าเพิ่มและแก้ไข
                 if (item.dataField != "create_date" && item.dataField != "create_by_user_id" && item.dataField != "update_date" && item.dataField != "update_by_user_id" && item.dataField != "license_id" && item.dataField != "history") {
                     if (item.dataField == "number_car") {
@@ -230,7 +264,7 @@ $(function () {
                                 disabled: false
                             },
                         });
-                    }else {
+                    } else {
                         itemEditing.push({
                             colSpan: item.colSpan,
                             dataField: item.dataField,
@@ -240,12 +274,86 @@ $(function () {
                 }
                 //จบรายการหน้าโชว์หน้าเพิ่มและแก้ไข
             });
-            
+
             //ตัวแปร data โชว์ Column และตั้งค่า Column ไหนที่เอามาโชว์บ้าง
             dataGrid.option('columns', data);
         }
     });
     //จบการกำหนด Column
+
+    $('#btnUploadPic').click(function () {
+        upload_multi_pic();
+    });
+
+    function upload_multi_pic() {
+
+        var n = upload_pic_length;
+        var license_id = $("#upload_pic #license_id").val();
+
+        for (i = 0; i < n; i++) {
+            var model = new FormData();
+            model.append('license_id', license_id);
+            model.append('loc_img', $('#pic-type-' + i).val());
+            model.append('path_img', upload_pic._options.value[i]);
+            console.log(upload_pic._options.value[i]);
+            console.log(model);
+            $.ajax({
+                type: 'POST',
+                url: 'http://tabien.threetrans.com/TTApi/Tabien/Report/UploadPicLicense',
+                data: model,
+                dataType: "json",
+                processData: false,
+                contentType: false, // not json
+                async: false,
+                success: function (res) {
+                    console.log(res);
+                },
+                error: function (res, jqXHR) {
+                    console.log(jqXHR);
+                }
+            });
+        }
+    }
+
+    function GetDetailLicense(license_id) {
+        return $.ajax({
+            type: "POST",
+            url: "http://tabien.threetrans.com/TTApi/CheckList/Profile/GetDetailLicense",
+            data: { license_id: license_id },
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                console.log(data);
+            }
+        }).responseJSON;
+    }
+
+    function show_popup_pic(id) {
+        console.log(id);
+        var detail = GetDetailLicense(id)[0];
+        $("#gallery_car").dxGallery({
+            dataSource: detail.gallery,
+            height: 'auto',
+            loop: true,
+            slideshowDelay: 4000,
+            showNavButtons: true,
+            showIndicator: true,
+            itemTemplate: function (item, index) {
+                var t = item.path.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com");
+                t = t.replace("..", "http://tabien.threetrans.com");
+                t = t.replace("#", "%23");
+                console.log(t);
+                var result = $("<div>");
+                $("<img>").attr("src", t).appendTo(result);
+                $("<div>").addClass("item-position").text(item.position).appendTo(result);
+                $("<div>").addClass("item-address").text('').appendTo(result);
+                return result;
+            }
+        }).dxGallery("instance");
+        $('#viewPic').modal('show');
+    }
+
+
 
     //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
     $.ajax({
@@ -274,11 +382,11 @@ $(function () {
         uploadMode: "useForm",
         onValueChanged: function (e) {
             var files = e.value;
-            
+
             fileDataPic = new FormData();
             if (files.length > 0) {
                 $.each(files, function (i, file) {
-                   
+
                     if (file.type != "application/pdf") {
                         //Resize Pic
                         var img = document.createElement("img");
@@ -332,6 +440,37 @@ $(function () {
 
     //จบการกำหนด Upload files
 
+
+    var upload_pic = $("#file-uploader-images").dxFileUploader({
+        multiple: true,
+        uploadMode: "useButtons",
+        uploadUrl: "https://js.devexpress.com/Content/Services/upload.aspx",
+        allowedFileExtensions: [".jpg", ".jpeg", ".gif", ".png"],
+        onValueChanged: function (e) {
+            var files = e.value;
+            if (files.length > 0) {
+                $("#selected-files .selected-item").remove();
+                $.each(files, function (i, file) {
+                    var $selectedItem = $("<div />").addClass("selected-item");
+                    $selectedItem.append(
+                        /*$("<span />").html("Name: " + file.name + "<br/>"),
+                        $("<span />").html("Size " + file.size + " bytes" + "<br/>"),
+                        $("<span />").html("Type " + file.type + "<br/>"),*/
+                        $("<span />").html("<select class='form-control form-control-sm' id='pic-type-" + i + "'><option value='1'>ด้านหน้า</option><option value='2'>ด้านหลัง</option><option value='3'>ด้านข้างซ้าย</option><option value='4'>ด้านข้างขวา</option><option value='5'>ด้านหน้าข้างขวา</option><option value='6'>ด้านหน้าข้างซ้าย</option><option value='7'>ด้านท้ายข้างขวา</option><option value='8'>ด้านท้ายข้างซ้าย</option></select>")
+                        /*$("<span />").html("Last Modified Date: " + file.lastModifiedDate)*/
+                    );
+                    $selectedItem.appendTo($("#selected-files"));
+
+                });
+                $("#selected-files").show();
+            }
+            else {
+                $("#selected-files").hide();
+            }
+            upload_pic_length = files.length;
+        }
+    }).dxFileUploader("instance");
+
     //กำหนดรายการคลิกขวาใน treeview และเงื่อนไขกรณีที่มีการคลิกเลือกรายการ
     getContextMenu();
     function getContextMenu() {
@@ -340,6 +479,7 @@ $(function () {
             width: 200,
             target: "#treeview",
             onItemClick: function (e) {
+                console.log(e);
                 if (!e.itemData.items) {
                     if (e.itemData.text == "New File") {
                         cf.reset();
@@ -397,7 +537,7 @@ $(function () {
             allowAdding: boolStatus,
             form: {
                 items: itemEditing,
-                colCount: 6,                
+                colCount: 6,
             },
             popup: {
                 title: "รายการจดทะเบียน",
@@ -422,7 +562,7 @@ $(function () {
             if (!fnUpdateLicense(e.newData, e.key.license_id)) {
                 e.newData = e.oldData;
             }
-            
+
         },
         onRowInserting: function (e) {
             var statusInsert = fnInsertLicense(e.data);
@@ -472,7 +612,7 @@ $(function () {
                                 nGallery++;
                             });
                             if (item.type_file == "pic") {
-                                console.log(itemData);
+                                console.log(gallery);
                                 galleryWidget.option("dataSource", gallery);
                                 galleryWidget.option("selectedIndex", gallerySelect);
                                 $("#popup").dxPopup("show");
@@ -491,7 +631,7 @@ $(function () {
                             idFile = item.file_id;
                             if (name == "Root") {
                                 OptionsMenu = contextMenuItemsRoot;
-                            }else if (type_file == "folder") {
+                            } else if (type_file == "folder") {
                                 OptionsMenu = contextMenuItemsFolder;
                             } else {
                                 OptionsMenu = contextMenuItemsFile;
@@ -529,7 +669,7 @@ $(function () {
         },
     }).dxDataGrid('instance');
     //จบการกำหนด dataGrid
-   
+
     //Get Files from controller Home/GetFiles
     function fnGetFiles(license_id) {
         var itemData;
@@ -551,7 +691,7 @@ $(function () {
                 itemData = data;
             }
         });
-        
+
         return itemData;
     }
     //End get Files
@@ -578,7 +718,7 @@ $(function () {
     }
 
     //20190322 Edit Show position
-    
+
     function showDate() {
 
         var dataNode = $(".dx-treeview-node-is-leaf");
@@ -592,7 +732,7 @@ $(function () {
                 console.log(treeview._options.items);
                 var data_filter = treeview._options.items.filter(function (x) { return x.file_id == dataNode[i].dataset.itemId; })
                 console.log(dataNode[i].dataset.itemId);
-                
+
                 //var data_filter = treeview._options.items.filter(element => element.file_id == dataNode[i].dataset.itemId)
                 console.log(data_filter);
                 if (data_filter[0].position != null && data_filter[0].position != '') {
@@ -643,7 +783,7 @@ $(function () {
         });
         return returnId;
     }
-    
+
 
     //Function Update ข้อมูลทะเบียน
     function fnUpdateLicense(newData, keyItem) {
@@ -730,31 +870,31 @@ $(function () {
 
     //Function Rename file in treeview
     function fnRename(fileUpload) {
-        
-            $.ajax({
-                type: "POST",
-                url: "../Home/fnRenameLicense",
-                data: fileUpload,
-                dataType: "json",
-                contentType: false,
-                processData: false,
-                success: function (data) {
 
-                    if (data[0].Status != '0') {
-                        var itemData = fnGetFiles(data[0].Status);
-                        fnChangeTreeview(data[0].Status, itemData);
-                        
-                    } else {
-                        DevExpress.ui.notify("ไม่สามารถแก้ไขได้", "error");
-                    }
-                    document.getElementById('lbRename').value = '';
-                    $('#mdRename').modal('hide');
-                    document.getElementById("btnRename").disabled = false;
-                },
-                error: function (error) {
-                    DevExpress.ui.notify(error, "error");
+        $.ajax({
+            type: "POST",
+            url: "../Home/fnRenameLicense",
+            data: fileUpload,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (data) {
+
+                if (data[0].Status != '0') {
+                    var itemData = fnGetFiles(data[0].Status);
+                    fnChangeTreeview(data[0].Status, itemData);
+
+                } else {
+                    DevExpress.ui.notify("ไม่สามารถแก้ไขได้", "error");
                 }
-            });
+                document.getElementById('lbRename').value = '';
+                $('#mdRename').modal('hide');
+                document.getElementById("btnRename").disabled = false;
+            },
+            error: function (error) {
+                DevExpress.ui.notify(error, "error");
+            }
+        });
         //} else {
         //    $('#mdNewFolder').modal('hide');
         //    alert("กรุณากรอกข้อมูลให้ครบ");
