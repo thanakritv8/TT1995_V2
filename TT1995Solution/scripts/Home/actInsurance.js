@@ -492,6 +492,9 @@ $(function () {
         newData.key = keyItem;
         newData.IdTable = gbTableId;
         newData.update_group = IsCheckBoxSelect;
+        if (newData.update_group.length === 0) {
+            newData.update_group.push(keyItem);
+        }
         console.log(newData);
 
         var returnStatus;

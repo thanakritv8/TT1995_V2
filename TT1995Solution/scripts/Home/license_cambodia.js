@@ -122,6 +122,7 @@ $(function () {
         },
         masterDetail: {
             enabled: false,
+            autoExpandAll: true,
             template: function (container, options) {
                 container.append($('<div class="gc"></div>'));
                 var gc;
@@ -271,7 +272,7 @@ $(function () {
                             store: new DevExpress.data.ArrayStore({
                                 data: data
                             }),
-                            filter: ["lc_id", "=", gbE.currentSelectedRowKeys[0].lc_id]
+                            filter: ["lc_id", "=", options.key.lc_id]
                         });
                         gc.option('dataSource', dataTemp);
                         //gc.option('dataSource', data);

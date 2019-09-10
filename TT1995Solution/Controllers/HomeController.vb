@@ -526,19 +526,19 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function InsertTax(ByVal license_id As String, ByVal tax_expire As String, ByVal tax_rate As String, ByVal tax_startdate As String, ByVal tax_status As String, ByVal special_expenses_1 As String, ByVal special_expenses_2 As String, ByVal contract_wages As String, ByVal IdTable As String, ByVal note As String, ByVal group_update As String) As String
+        Public Function InsertTax(ByVal license_id As String, ByVal tax_expire As String, ByVal tax_rate As String, ByVal tax_startdate As String, ByVal tax_status As String, ByVal special_expenses_1 As String, ByVal special_expenses_2 As String, ByVal contract_wages As String, ByVal IdTable As String, ByVal note As String) As String
 
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO tax (tax_expire, tax_startdate, tax_rate, tax_status, license_id, create_by_user_id, create_date, special_expenses_1, special_expenses_2, contract_wages, note, group_update) OUTPUT Inserted.tax_id VALUES "
-            _SQL &= "('" & tax_expire & "', '" & tax_startdate & "', '" & tax_rate & "', N'" & tax_status & "', '" & license_id & "', '" & Session("UserId") & "', GETDATE(), " & IIf(special_expenses_1 Is Nothing, 0, special_expenses_1) & ", " & IIf(special_expenses_2 Is Nothing, 0, special_expenses_2) & ", " & IIf(contract_wages Is Nothing, 0, contract_wages) & ",N'" & note & "',N'" & group_update & "')"
+            Dim _SQL As String = "INSERT INTO tax (tax_expire, tax_startdate, tax_rate, tax_status, license_id, create_by_user_id, create_date, special_expenses_1, special_expenses_2, contract_wages, note) OUTPUT Inserted.tax_id VALUES "
+            _SQL &= "('" & tax_expire & "', '" & tax_startdate & "', '" & tax_rate & "', N'" & tax_status & "', '" & license_id & "', '" & Session("UserId") & "', GETDATE(), " & IIf(special_expenses_1 Is Nothing, 0, special_expenses_1) & ", " & IIf(special_expenses_2 Is Nothing, 0, special_expenses_2) & ", " & IIf(contract_wages Is Nothing, 0, contract_wages) & ",N'" & note & "')"
             If Not license_id Is Nothing And Not tax_expire Is Nothing And Not tax_startdate Is Nothing Then
                 Try
                     DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
                     If DtJson.Rows(0).Item("Status").ToString <> "0" Then
-                        Dim StrTbTax() As String = {"tax_expire", "tax_rate", "tax_startdate", "tax_status", "special_expenses_1", "special_expenses_2", "contract_wages", "group_update"}
-                        Dim TbTax() As Object = {tax_expire, tax_rate, tax_startdate, tax_status, special_expenses_1, special_expenses_2, contract_wages, group_update}
+                        Dim StrTbTax() As String = {"tax_expire", "tax_rate", "tax_startdate", "tax_status", "special_expenses_1", "special_expenses_2", "contract_wages"}
+                        Dim TbTax() As Object = {tax_expire, tax_rate, tax_startdate, tax_status, special_expenses_1, special_expenses_2, contract_wages}
                         For n As Integer = 0 To TbTax.Length - 1
                             If Not TbTax(n) Is Nothing Then
                                 GbFn.KeepLog(StrTbTax(n), TbTax(n), "Add", IdTable, DtJson.Rows(0).Item("Status").ToString)
@@ -2374,7 +2374,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO license_v8 ([lv8_number],[license_id],[ownership],[tax_Id],[lv8_start],[lv8_expire],[lv8_mpa],[lv8_rd],[lv8_status],[note],[create_by_user_id],[group_update]) OUTPUT Inserted.lv8_id VALUES "
+            Dim _SQL As String = "INSERT INTO license_v8 ([lv8_number],[license_id],[ownership],[tax_Id],[lv8_start],[lv8_expire],[lv8_mpa],[lv8_rd],[lv8_status],[note],[create_by_user_id]) OUTPUT Inserted.lv8_id VALUES "
             _SQL &= "(N'" & lv8_number & "', '" & license_id & "', N'" & ownership & "', N'" & tax_Id & "', '" & lv8_start & "', '" & lv8_expire & "', N'" & lv8_mpa & "', N'" & lv8_rd & "', N'" & lv8_status & "', N'" & note & "', '" & Session("UserId") & "' )"
             If Not license_id Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
@@ -2607,7 +2607,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim license_id As Integer = objDB.SelectSQL("SELECT * FROM [dbo].[license] where number_car = '" & number_car & "'", cn).Rows(0).Item("license_id")
-            Dim _SQL As String = "INSERT INTO [main_insurance] ([license_id],[insurance_company],[start_date],[end_date],[policy_number],[assured],[current_cowrie],[previous_cowrie],[status],[note],[create_date],[create_by_user_id],[group_update]) OUTPUT Inserted.mi_id"
+            Dim _SQL As String = "INSERT INTO [main_insurance] ([license_id],[insurance_company],[start_date],[end_date],[policy_number],[assured],[current_cowrie],[previous_cowrie],[status],[note],[create_date],[create_by_user_id]) OUTPUT Inserted.mi_id"
             _SQL &= " VALUES (" & IIf(license_id.ToString Is Nothing, 0, license_id.ToString) & ","
             _SQL &= "N'" & IIf(insurance_company Is Nothing, String.Empty, insurance_company) & "',"
             _SQL &= "N'" & IIf(start_date Is Nothing, String.Empty, start_date) & "',"
@@ -2619,7 +2619,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(status Is Nothing, String.Empty, status) & "',"
             _SQL &= "N'" & IIf(note Is Nothing, String.Empty, note) & "',"
             _SQL &= "getdate(),"
-            _SQL &= Session("UserId") & "')"
+            _SQL &= "'" & Session("UserId") & "')"
 
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
@@ -2731,7 +2731,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(status Is Nothing, String.Empty, status) & "',"
             _SQL &= "N'" & IIf(first_damages Is Nothing, String.Empty, first_damages) & "',"
             _SQL &= "getdate(),"
-            _SQL &= Session("UserId") & "')"
+            _SQL &= "'" & Session("UserId") & "')"
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
             Else
@@ -2842,14 +2842,14 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
         End Function
         Public Function InsertAI(ByVal number_car As String, ByVal insurance_company As String, ByVal start_date As String, ByVal end_date As String, ByVal note As String _
                                   , ByVal status As String, ByVal price As String, ByVal policy_number As String, ByVal first_damages As String, ByVal add_damages As String,
-                                 ByVal key As String, ByVal IdTable As String, ByVal group_update As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal type As String) As String
+                                 ByVal key As String, ByVal IdTable As String, ByVal current_cowrie As String, ByVal previous_cowrie As String, ByVal type As String) As String
 
             Dim DtJson As DataTable = New DataTable
 
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim license_id As Integer = objDB.SelectSQL("SELECT * FROM [dbo].[license] where number_car = '" & number_car & "'", cn).Rows(0).Item("license_id")
-            Dim _SQL As String = "INSERT INTO [act_insurance] ([license_id],[insurance_company],[start_date],[end_date],[note],[status],[price],[policy_number],[first_damages],[add_damages],[create_date],[create_by_user_id],[group_update],[current_cowrie],[previous_cowrie],[type]) OUTPUT Inserted.ai_id"
+            Dim _SQL As String = "INSERT INTO [act_insurance] ([license_id],[insurance_company],[start_date],[end_date],[note],[status],[price],[policy_number],[first_damages],[add_damages],[create_date],[create_by_user_id],[current_cowrie],[previous_cowrie],[type]) OUTPUT Inserted.ai_id"
             _SQL &= " VALUES (" & IIf(license_id.ToString Is Nothing, 0, license_id.ToString) & ","
             _SQL &= "N'" & IIf(insurance_company Is Nothing, String.Empty, insurance_company) & "',"
             _SQL &= "N'" & IIf(start_date Is Nothing, String.Empty, start_date) & "',"
@@ -2862,7 +2862,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(add_damages Is Nothing, String.Empty, add_damages) & "',"
             _SQL &= "getdate(),"
             _SQL &= Session("UserId") & ","
-            _SQL &= "N'" & group_update & "',"
             _SQL &= "N'" & current_cowrie & "',"
             _SQL &= "N'" & previous_cowrie & "',"
             _SQL &= "N'" & type & "')"
@@ -3691,36 +3690,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Next
             Return SqlForUpdate
         End Function
-
-        'Public Function group_update_(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String)
-        '    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-        '    Dim _Sql As String = "select group_update from " & TableName & " where " & NameColumnId & " = '" & id & "'"
-        '    Dim Dt As DataTable = objDB.SelectSQL(_Sql, cn)
-        '    'NO Group 
-        '    If IsDBNull(Dt.Rows(0).Item("group_update")) Or Dt.Rows(0).Item("group_update") = "" Then
-        '        If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
-        '            _Sql = "UPDATE " & TableName & " SET current_cowrie = 0, previous_cowrie = (select current_cowrie from " & TableName & " where " & NameColumnId & " = " & id & "), flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "'  where " & NameColumnId & " = " & id
-        '            If objDB.ExecuteSQL(_Sql, cn) Then
-        '                Return 1
-        '            Else
-        '                Return 0
-        '            End If
-        '        Else
-        '            Return 1
-        '        End If
-        '    Else 'Group
-        '        _Sql = "UPDATE " & TableName & " SET flag_status = 0, update_status = GETDATE()," & NameColumnStatus & " = N'" & Status & "' where group_update = '" & Dt.Rows(0).Item("group_update") & "'"
-        '        If objDB.ExecuteSQL(_Sql, cn) Then
-        '            If (Status = "เสร็จสมบูรณ์" And (TableName = "domestic_product_insurance" Or TableName = "main_insurance" Or TableName = "act_insurance")) Then
-        '                Return cowrie_update(TableName, Dt.Rows(0).Item("group_update"), NameColumnId)
-        '            Else
-        '                Return 1
-        '            End If
-        '        Else
-        '            Return 0
-        '        End If
-        '    End If
-        'End Function
 
         Public Function group_update(ByVal TableName As String, ByVal Status As String, ByVal NameColumnStatus As String, ByVal id As String, ByVal NameColumnId As String, ByVal update_group As String())
 
