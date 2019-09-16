@@ -541,7 +541,9 @@ $(function () {
         newData.lv8_id = keyItem;
         newData.IdTable = gbTableId;
         newData.update_group = IsCheckBoxSelect;
-        
+        if (newData.update_group.length === 0) {
+            newData.update_group.push(keyItem);
+        }
         $.ajax({
             type: "POST",
             url: "../Home/UpdateLv8",
