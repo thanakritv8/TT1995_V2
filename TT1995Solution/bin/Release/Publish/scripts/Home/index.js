@@ -130,6 +130,7 @@ $(function () {
                             async: false,
                             success: function (dataPic) {
                                 console.log(dataPic[0]);
+                                console.log(dataPic);
                                 if (dataPic[0] === undefined || dataPic[0] === null) {
                                 } else {
                                     data.push(dataPic[0]);

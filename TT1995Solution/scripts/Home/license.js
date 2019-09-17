@@ -10,6 +10,12 @@ var idFK = '';
 var gbE;
 var gbTableId = '1';
 
+var dataGridAll;
+
+var filterHeadTail = [];
+filterHeadTail.head = true;
+filterHeadTail.tail = true;
+
 //ตัวแปรควบคุมการคลิก treeview
 var isFirstClick = false;
 var rowIndex = 0;
@@ -206,6 +212,7 @@ $(function () {
         paging: {
             pageSize: 10
         },
+        
         searchPanel: {
             visible: true,
             highlightCaseSensitive: true
@@ -461,21 +468,25 @@ $(function () {
 
 
     //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
-    $.ajax({
-        type: "POST",
-        url: "../Home/GetLicense",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var d1 = parseJsonDate(data[i].license_date);
-                data[i].license_date = d1;
-                var d2 = parseJsonDate(data[i].license_expiration);
-                data[i].license_expiration = d2;
+    function GetLicense() {
+        return $.ajax({
+            type: "POST",
+            url: "../Home/GetLicense",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var d1 = parseJsonDate(data[i].license_date);
+                    data[i].license_date = d1;
+                    var d2 = parseJsonDate(data[i].license_expiration);
+                    data[i].license_expiration = d2;
+                }
             }
-            dataGrid.option('dataSource', data);
-        }
-    });
+        }).responseJSON;
+    }
+
+    //});
     //จบการโชว์ข้อมูลทะเบียน
 
     //กำหนดการ Upload files
@@ -620,6 +631,34 @@ $(function () {
             visible: true,
             width: 240,
             placeholder: "Search..."
+        },
+        onToolbarPreparing: function (e) {
+            var toolbarItems = e.toolbarOptions.items;
+            // Adds a new item
+            toolbarItems.push({
+                widget: "dxCheckBox",
+                options: {
+                    text : 'หัว',
+                    value: true,
+                    onValueChanged: function (e) {
+                        filterHeadTail.head = e.value;
+                        filterTypeCar(filterHeadTail);
+                    }
+            },
+                location: "before"
+            });
+            toolbarItems.push({
+                widget: "dxCheckBox",
+                options: {
+                    text: 'หาง',
+                    value: true,
+                    onValueChanged: function (e) {
+                        filterHeadTail.tail = e.value;
+                        filterTypeCar(filterHeadTail);
+                    }
+                },
+                location: "before"
+            });
         },
         showBorders: true,
         columnChooser: {
@@ -774,6 +813,21 @@ $(function () {
         },
     }).dxDataGrid('instance');
     //จบการกำหนด dataGrid
+
+    function filterTypeCar(filterHeadTail) {
+        if (filterHeadTail.head && filterHeadTail.tail) {
+            dataGrid.option('dataSource', dataGridAll);
+        } else if (filterHeadTail.head === false && filterHeadTail.tail === false){
+            dataGrid.option('dataSource', null);
+        } else if (filterHeadTail.head === false) {
+            dataGrid.option('dataSource', dataGridAll.filter(function (arr) { return arr.number_car.indexOf('T') > -1; }));
+        } else if (filterHeadTail.tail === false) {
+            dataGrid.option('dataSource', dataGridAll.filter(function (arr) { return arr.number_car.indexOf('T') === -1; }));
+        }
+    }
+
+    dataGridAll = GetLicense();
+    dataGrid.option('dataSource', dataGridAll);
 
     //Get Files from controller Home/GetFiles
     function fnGetFiles(license_id) {

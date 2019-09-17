@@ -50,9 +50,9 @@ $(function () {
     $("#btnSave").dxButton({
         onClick: function () {
             document.getElementById("btnSave").disabled = true;
-            if ($("#setPosition")[0].checked == true) {
-                fileDataPic.append('position', $("#positionSelect").val());
-            }
+            //if ($("#setPosition")[0].checked == true) {
+            //    fileDataPic.append('position', $("#positionSelect").val());
+            //}
             fnInsertFiles(fileDataPic);
 
         }
@@ -746,7 +746,7 @@ $(function () {
                     },
                     onItemExpanded: function (e) {
                         var item = e.itemData;
-                        showDate();
+                        //showDate();
                         //console.log(item);
                         //ExpandedAndCollapsed(item.id, 1);                            
                     },
@@ -819,7 +819,7 @@ $(function () {
             filter: ["fk_id", "=", license_id]
         });
         treeview.option("dataSource", dts);
-        showDate();
+        //showDate();
     }
 
     //20190322 Edit Show position

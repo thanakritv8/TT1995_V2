@@ -10,7 +10,7 @@ Namespace Controllers
         ' GET: Home
         Function Index() As ActionResult
             If Session("StatusLogin") = "1" Then
-                SetDataOfConfigColumnData()
+
                 Return View("../Home/Index")
             Else
                 Return View("../Account/Login")
@@ -140,7 +140,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
         Public Function GetLicense() As String
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "SELECT [license_id],[number_car],[license_car],[province],[type_fuel],[type_car],[style_car],[brand_car],[model_car],[color_car],[number_body],[number_engine],[number_engine_point_1],[number_engine_point_2],[brand_engine],[pump],[horse_power],[shaft],[wheel],[tire],[license_date],[weight_car],[weight_lade],[weight_total],[ownership],[transport_operator],[transport_type],FORMAT([create_date], 'yyyy-MM-dd'),[create_by_user_id],[update_date],[update_by_user_id], [seq], [nationality], [id_card], [address], [license_expiration], [possessory_right], [license_no], [license_status],N'ประวัติ' as history,[fleet], license_location, internal_call, license_id as license_pic, N'จัดการรูป' as Upload_pic FROM [license] ORDER BY LEN(number_car),number_car"
+            Dim _SQL As String = "SELECT [license_id],[number_car],[license_car],[province],[type_fuel],[type_car],[style_car],[brand_car],[model_car],[color_car],[number_body],[number_engine],[number_engine_point_1],[number_engine_point_2],[brand_engine],[pump],[horse_power],[shaft],[wheel],[tire],[license_date],[weight_car],[weight_lade],[weight_total],[ownership],[transport_operator],[transport_type],FORMAT([create_date], 'yyyy-MM-dd'),[create_by_user_id],[update_date],[update_by_user_id], [seq], [nationality], [id_card], [address], [license_expiration], [possessory_right], [license_no], [license_status],N'ประวัติ' as history,[fleet], license_location, internal_call, license_id as license_pic, N'จัดการรูป' as Upload_pic,real_weight FROM [license] ORDER BY LEN(number_car),number_car"
             Dim DtLicense As DataTable = objDB.SelectSQL(_SQL, cn)
             objDB.DisconnectDB(cn)
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtLicense.Rows Select DtLicense.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
@@ -166,14 +166,14 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                                       , ByVal license_date As String, ByVal weight_car As String, ByVal weight_lade As String _
                                       , ByVal weight_total As String, ByVal ownership As String, ByVal transport_operator As String, ByVal transport_type As String, ByVal key As String _
                                       , ByVal seq As String, ByVal nationality As String, ByVal id_card As String, ByVal address As String _
-                                      , ByVal license_expiration As String, ByVal possessory_right As String, ByVal license_no As String, ByVal license_status As String, ByVal IdTable As String, ByVal fleet As String, ByVal license_location As String, ByVal internal_call As String) As String
+                                      , ByVal license_expiration As String, ByVal possessory_right As String, ByVal license_no As String, ByVal license_status As String, ByVal IdTable As String, ByVal fleet As String, ByVal license_location As String, ByVal internal_call As String, ByVal real_weight As String) As String
 
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [license] SET "
-            Dim StrTbLicense() As String = {"number_car", "license_car", "province", "type_fuel", "type_car", "style_car", "brand_car", "model_car", "color_car", "number_body", "number_engine", "number_engine_point_1", "number_engine_point_2", "brand_engine", "pump", "horse_power", "shaft", "wheel", "tire", "license_date", "weight_car", "weight_lade", "weight_total", "ownership", "transport_operator", "transport_type", "seq", "nationality", "id_card", "address", "license_expiration", "possessory_right", "license_no", "license_status", "fleet", "license_location", "internal_call"}
-            Dim TbLicense() As Object = {number_car, license_car, province, type_fuel, type_car, style_car, brand_car, model_car, color_car, number_body, number_engine, number_engine_point_1, number_engine_point_2, brand_engine, pump, horse_power, shaft, wheel, tire, license_date, weight_car, weight_lade, weight_total, ownership, transport_operator, transport_type, seq, nationality, id_card, address, license_expiration, possessory_right, license_no, license_status, fleet, license_location, internal_call}
+            Dim StrTbLicense() As String = {"number_car", "license_car", "province", "type_fuel", "type_car", "style_car", "brand_car", "model_car", "color_car", "number_body", "number_engine", "number_engine_point_1", "number_engine_point_2", "brand_engine", "pump", "horse_power", "shaft", "wheel", "tire", "license_date", "weight_car", "weight_lade", "weight_total", "ownership", "transport_operator", "transport_type", "seq", "nationality", "id_card", "address", "license_expiration", "possessory_right", "license_no", "license_status", "fleet", "license_location", "internal_call", "real_weight"}
+            Dim TbLicense() As Object = {number_car, license_car, province, type_fuel, type_car, style_car, brand_car, model_car, color_car, number_body, number_engine, number_engine_point_1, number_engine_point_2, brand_engine, pump, horse_power, shaft, wheel, tire, license_date, weight_car, weight_lade, weight_total, ownership, transport_operator, transport_type, seq, nationality, id_card, address, license_expiration, possessory_right, license_no, license_status, fleet, license_location, internal_call, real_weight}
             For n As Integer = 0 To TbLicense.Length - 1
                 If Not TbLicense(n) Is Nothing Then
                     _SQL &= StrTbLicense(n) & "=N'" & IIf(TbLicense(n).IndexOf("'") >= 0, TbLicense(n).Insert(TbLicense(n).IndexOf("'") + 1, "'"), TbLicense(n)) & "',"
@@ -203,12 +203,12 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                                       , ByVal license_date As String, ByVal weight_car As String, ByVal weight_lade As String _
                                       , ByVal weight_total As String, ByVal ownership As String, ByVal transport_operator As String, ByVal transport_type As String _
                                       , ByVal seq As String, ByVal nationality As String, ByVal id_card As String, ByVal address As String _
-                                      , ByVal license_expiration As String, ByVal possessory_right As String, ByVal license_no As String, ByVal license_status As String, ByVal IdTable As String, ByVal fleet As String, ByVal license_location As String, ByVal internal_call As String) As String
+                                      , ByVal license_expiration As String, ByVal possessory_right As String, ByVal license_no As String, ByVal license_status As String, ByVal IdTable As String, ByVal fleet As String, ByVal license_location As String, ByVal internal_call As String, ByVal real_weight As String) As String
 
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO [license] ([number_car],[license_car],[province],[type_fuel],[type_car],[style_car],[brand_car],[model_car],[color_car],[number_body],[number_engine],[number_engine_point_1],[number_engine_point_2],[brand_engine],[pump],[horse_power],[shaft],[wheel],[tire],[license_date],[weight_car],[weight_lade],[weight_total],[ownership],[transport_operator],[transport_type], [seq], [nationality], [id_card], [address], [license_expiration], [possessory_right], [license_no], [license_status],[fleet],[license_location],[create_by_user_id],[internal_call]) OUTPUT Inserted.license_id"
+            Dim _SQL As String = "INSERT INTO [license] ([number_car],[license_car],[province],[type_fuel],[type_car],[style_car],[brand_car],[model_car],[color_car],[number_body],[number_engine],[number_engine_point_1],[number_engine_point_2],[brand_engine],[pump],[horse_power],[shaft],[wheel],[tire],[license_date],[weight_car],[weight_lade],[weight_total],[ownership],[transport_operator],[transport_type], [seq], [nationality], [id_card], [address], [license_expiration], [possessory_right], [license_no], [license_status],[fleet],[license_location],[create_by_user_id],[internal_call],[real_weight]) OUTPUT Inserted.license_id"
             _SQL &= " VALUES ('" & IIf(number_car Is Nothing, 0, number_car) & "',"
             _SQL &= "N'" & IIf(license_car Is Nothing, String.Empty, license_car) & "',"
             _SQL &= "N'" & IIf(province Is Nothing, String.Empty, province) & "',"
@@ -246,7 +246,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "N'" & IIf(fleet Is Nothing, String.Empty, fleet) & "',"
             _SQL &= "N'" & IIf(license_location Is Nothing, String.Empty, license_location) & "',"
             _SQL &= Session("UserId") & ","
-            _SQL &= "N'" & If(internal_call Is Nothing, String.Empty, IIf(internal_call.IndexOf("'") >= 0, internal_call.Insert(internal_call.IndexOf("'") + 1, "'"), internal_call)) & "')"
+            _SQL &= "N'" & If(internal_call Is Nothing, String.Empty, IIf(internal_call.IndexOf("'") >= 0, internal_call.Insert(internal_call.IndexOf("'") + 1, "'"), internal_call)) & "',"
+            _SQL &= "N'" & real_weight & "')"
 
             If Not number_car Is Nothing Then
                 DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
@@ -2581,14 +2582,14 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim _SQL As String = "UPDATE [main_insurance] SET "
-            Dim StrTbAI() As String = {"insurance_company", "start_date", "end_date", "note", "policy_number", "assured", "current_cowrie", "previous_cowrie", "status"}
-            Dim TbAI() As Object = {insurance_company, start_date, end_date, note, policy_number, assured, current_cowrie, previous_cowrie, status}
-            For n As Integer = 0 To TbAI.Length - 1
-                If Not TbAI(n) Is Nothing Then
-                    _SQL &= StrTbAI(n) & "=N'" & TbAI(n) & "',"
+            Dim StrTbMI() As String = {"insurance_company", "start_date", "end_date", "note", "policy_number", "assured", "current_cowrie", "previous_cowrie", "status"}
+            Dim TbMI() As Object = {insurance_company, start_date, end_date, note, policy_number, assured, current_cowrie, previous_cowrie, status}
+            For n As Integer = 0 To TbMI.Length - 1
+                If Not TbMI(n) Is Nothing Then
+                    _SQL &= StrTbMI(n) & "=N'" & TbMI(n) & "',"
                 End If
-                If StrTbAI(n) = "status" Then
-                    If Not TbAI(n) Is Nothing Then
+                If StrTbMI(n) = "status" Then
+                    If Not TbMI(n) Is Nothing Then
                         _SQL &= "flag_status = 0, update_status = GETDATE(),"
                     End If
                 End If
@@ -2596,14 +2597,16 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE mi_id = " & key
             If objDB.ExecuteSQL(_SQL, cn) Then
                 'DtJson.Rows.Add("1")
-                For n As Integer = 0 To TbAI.Length - 1
-                    If Not TbAI(n) Is Nothing Then
-                        GbFn.KeepLog(StrTbAI(n), TbAI(n), "Editing", IdTable, key)
+                For n As Integer = 0 To TbMI.Length - 1
+                    If Not TbMI(n) Is Nothing Then
+                        GbFn.KeepLog(StrTbMI(n), TbMI(n), "Editing", IdTable, key)
                     End If
                 Next
                 'Group Update
                 If Not status Is Nothing And Not update_group Is Nothing Then
                     DtJson.Rows.Add(group_update("main_insurance", status, "status", key, "mi_id", update_group))
+                Else
+                    DtJson.Rows.Add("1")
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -2707,7 +2710,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE dpi_id = " & key
             If objDB.ExecuteSQL(_SQL, cn) Then
-                DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbDPI.Length - 1
                     If Not TbDPI(n) Is Nothing Then
                         GbFn.KeepLog(StrTbDPI(n), TbDPI(n), "Editing", IdTable, key)
@@ -2716,6 +2718,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 'Group Update
                 If Not status Is Nothing And Not update_group Is Nothing Then
                     DtJson.Rows.Add(group_update("domestic_product_insurance", status, "status", key, "dpi_id", update_group))
+                Else
+                    DtJson.Rows.Add("1")
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -2836,7 +2840,6 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE ai_id = " & key
             If objDB.ExecuteSQL(_SQL, cn) Then
-                DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbAI.Length - 1
                     If Not TbAI(n) Is Nothing Then
                         GbFn.KeepLog(StrTbAI(n), TbAI(n), "Editing", IdTable, key)
@@ -2845,6 +2848,8 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 'Group Update
                 If Not status Is Nothing And Not update_group Is Nothing Then
                     DtJson.Rows.Add(group_update("act_insurance", status, "status", key, "ai_id", update_group))
+                Else
+                    DtJson.Rows.Add("1")
                 End If
             Else
                 DtJson.Rows.Add("0")
@@ -4688,6 +4693,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
 #Region "Dashboard"
         Function dashboard() As ActionResult
+            SetDataOfConfigColumnData()
             If Session("StatusLogin") = "1" Then
                 Return View()
             Else

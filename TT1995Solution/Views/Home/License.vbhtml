@@ -195,7 +195,7 @@ End Code
                     <label>เพิ่มไฟล์</label>
                 </div>
                 <div class="modal-body">
-                    <div class="row" id="picCar">
+                    @*<div class="row" id="picCar">
                         <div class="col-5 ml-2">
                             <div class="form-group">
                                 <select class="form-control" id="positionSelect">
@@ -213,7 +213,7 @@ End Code
                         <div class="col-5">
                             <input class="mr-2 mt-2" id="setPosition" type="checkbox" value="">ตั้งค่าตำแหน่งรูปรถ
                         </div>
-                    </div>
+                    </div>*@
                     <div class="row">
                         <div class="col-sm">
                             <div class="custom-file"></div>
