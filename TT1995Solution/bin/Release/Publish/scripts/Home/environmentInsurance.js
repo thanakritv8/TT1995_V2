@@ -9,6 +9,10 @@ var dataGridAll;
 var dataLookupFilter;
 var gbE;
 
+var filterHeadTail = [];
+filterHeadTail.head = true;
+filterHeadTail.tail = true;
+
 //คลิกขวาโชว์รายการ   
 var contextMenuItemsRoot = [
     { text: 'New File' },
@@ -27,7 +31,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
-    $("a:contains('ภัยสิ่งแวดล้อม')").first().addClass("active");
+    $("a:contains('ประกันภัยสิ่งแวดล้อม')").first().addClass("active");
     function getDataEi() {
         var dataValue = [];
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
@@ -86,6 +90,34 @@ $(function () {
             visible: true,
             width: 240,
             placeholder: "Search..."
+        },
+        onToolbarPreparing: function (e) {
+            var toolbarItems = e.toolbarOptions.items;
+            // Adds a new item
+            toolbarItems.push({
+                widget: "dxCheckBox",
+                options: {
+                    text: 'หัว',
+                    value: true,
+                    onValueChanged: function (e) {
+                        filterHeadTail.head = e.value;
+                        filterTypeCar(filterHeadTail);
+                    }
+                },
+                location: "before"
+            });
+            toolbarItems.push({
+                widget: "dxCheckBox",
+                options: {
+                    text: 'หาง',
+                    value: true,
+                    onValueChanged: function (e) {
+                        filterHeadTail.tail = e.value;
+                        filterTypeCar(filterHeadTail);
+                    }
+                },
+                location: "before"
+            });
         },
         showBorders: true,
         columnChooser: {
@@ -294,6 +326,18 @@ $(function () {
         },
     }).dxDataGrid('instance');
     //จบการกำหนด dataGrid
+
+    function filterTypeCar(filterHeadTail) {
+        if (filterHeadTail.head && filterHeadTail.tail) {
+            dataGrid.option('dataSource', dataGridAll);
+        } else if (filterHeadTail.head === false && filterHeadTail.tail === false) {
+            dataGrid.option('dataSource', null);
+        } else if (filterHeadTail.head === false) {
+            dataGrid.option('dataSource', dataGridAll.filter(function (arr) { return arr.number_car.indexOf('T') > -1; }));
+        } else if (filterHeadTail.tail === false) {
+            dataGrid.option('dataSource', dataGridAll.filter(function (arr) { return arr.number_car.indexOf('T') === -1; }));
+        }
+    }
 
     //Get files where id and IdTable
     function fnGetFiles(EIId, IdTable) {

@@ -5528,7 +5528,6 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,
 #End Region
 
 #End Region
-
 #Region "Driver Profile"
         Function Driver_profile() As ActionResult
             If Session("StatusLogin") = "1" Then
@@ -5554,13 +5553,104 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtDriver.Rows Select DtDriver.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function InsertDriverProfile(ByVal driver_name As String)
+        'Public Function InsertDriverProfile(ByVal driver_name As String)
+        '    Dim DtJson As DataTable = New DataTable
+        '    DtJson.Columns.Add("Status")
+        '    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+        '    Dim _SQL As String = "INSERT INTO driver_profile (driver_name) OUTPUT Inserted.driver_id VALUES (N'" & driver_name & "')"
+        '    DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
+        '    objDB.DisconnectDB(cn)
+        '    Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        'End Function
+
+        Public Function InsertDP() As String
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
-            Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO driver_profile (driver_name) OUTPUT Inserted.driver_id VALUES (N'" & driver_name & "')"
-            DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
-            objDB.DisconnectDB(cn)
+            Try
+                Dim driver_name As String = String.Empty
+
+                If Request.Form.AllKeys.Length <> 0 Then
+                    For i As Integer = 0 To Request.Form.AllKeys.Length - 1
+                        If Request.Form.AllKeys(i) = "driver_name" Then
+                            driver_name = Request.Form(i)
+                        End If
+                    Next
+                    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+
+                    Dim _SQL As String = "INSERT INTO driver_profile (driver_name) OUTPUT Inserted.driver_id VALUES (N'" & driver_name & "')"
+                    Dim ReturnId = objDB.ExecuteSQLReturnId(_SQL, cn)
+                    If ReturnId > 0 And Request.Files.Count <> 0 Then
+                        Dim file = Request.Files(0)
+                        _SQL = "UPDATE driver_profile SET picture = N'../Files/DP/" & ReturnId & "/" & file.FileName & "' WHERE driver_id = " & ReturnId
+                        If objDB.ExecuteSQL(_SQL, cn) Then
+                            Dim pathServer As String = Server.MapPath("~/Files/DP/" & ReturnId)
+                            Dim fileName As String = String.Empty
+                            If (Not System.IO.Directory.Exists(pathServer)) Then
+                                System.IO.Directory.CreateDirectory(pathServer)
+                            End If
+                            file.SaveAs(pathServer & "/" & file.FileName)
+                            DtJson.Rows.Add("1")
+                        Else
+                            DtJson.Rows.Add("0")
+                        End If
+                    Else
+                        DtJson.Rows.Add("0")
+                    End If
+
+                    objDB.DisconnectDB(cn)
+                Else
+                    DtJson.Rows.Add("0")
+                End If
+            Catch ex As Exception
+                DtJson.Rows.Add("0")
+            End Try
+            Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
+        End Function
+
+        Public Function EditDP() As String
+            Dim DtJson As DataTable = New DataTable
+            DtJson.Columns.Add("Status")
+            Try
+                Dim driver_name As String = String.Empty
+                Dim driver_id As String = String.Empty
+
+                Dim SqlUpdate As String = String.Empty
+
+                If Request.Form.AllKeys.Length <> 0 Then
+                    For i As Integer = 0 To Request.Form.AllKeys.Length - 1
+                        If Request.Form.AllKeys(i) = "driver_name" Then
+                            driver_name = Request.Form(i)
+                        ElseIf Request.Form.AllKeys(i) = "driver_id" Then
+                            driver_id = Request.Form(i)
+                        End If
+                    Next
+                    Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
+                    Dim pathServer As String = Server.MapPath("~/Files/DP/" & driver_id)
+                    If Request.Files.Count <> 0 Then
+                        Dim file = Request.Files(0)
+                        If (Not System.IO.Directory.Exists(pathServer)) Then
+                            System.IO.Directory.CreateDirectory(pathServer)
+                        End If
+
+                        file.SaveAs(pathServer & "/" & file.FileName)
+
+                        SqlUpdate = SqlUpdate & ", picture = N'../Files/DP/" & driver_id & "/" & file.FileName & "'"
+                    End If
+
+                    Dim _SQL As String = "UPDATE driver_profile SET driver_name = N'" & driver_name & "'" & SqlUpdate & " WHERE driver_id = " & driver_id
+                    If objDB.ExecuteSQL(_SQL, cn) Then
+                        DtJson.Rows.Add("1")
+                    Else
+                        DtJson.Rows.Add("0")
+                    End If
+
+                    objDB.DisconnectDB(cn)
+                Else
+
+                End If
+            Catch ex As Exception
+                DtJson.Rows.Add("0")
+            End Try
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
@@ -5586,11 +5676,11 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-        Public Function DeleteDriverProfile(ByVal keyId As String) As String
+        Public Function DeleteDriverProfile(ByVal driver_id As String) As String
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "DELETE [driver_profile] WHERE driver_id = " & keyId
+            Dim _SQL As String = "DELETE [driver_profile] WHERE driver_id = " & driver_id
             If objDB.ExecuteSQL(_SQL, cn) Then
                 DtJson.Rows.Add("1")
             Else
@@ -5600,10 +5690,7 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,
             Return New JavaScriptSerializer().Serialize(From dr As DataRow In DtJson.Rows Select DtJson.Columns.Cast(Of DataColumn)().ToDictionary(Function(col) col.ColumnName, Function(col) dr(col)))
         End Function
 
-
-
 #End Region
-
 
 #End Region
 
