@@ -1163,12 +1163,22 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
             Dim DtJson As DataTable = New DataTable
             DtJson.Columns.Add("Status")
             Dim cn As SqlConnection = objDB.ConnectDB(My.Settings.NameServer, My.Settings.Username, My.Settings.Password, My.Settings.DataBase)
-            Dim _SQL As String = "INSERT INTO driver (driver_name, start_work_date, license_id_head, license_id_tail, create_by_user_id,driver_name2, fleet) OUTPUT Inserted.driver_id VALUES (N'" & driver_name & "', '" & start_work_date & "', '" & license_id_head & "', '" & license_id_tail & "', '" & Session("UserId") & "','" & driver_name2 & "','" & fleet & "')"
-            If license_id_head <> Nothing Then
-                DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
+
+            Dim _SQL As String = "SELECT * from driver where license_id_head = '" & license_id_head & "' and license_id_tail = '" & license_id_tail & "' and driver_name = '" & driver_name & "'"
+            Dim DtDriver As DataTable = objDB.SelectSQL(_SQL, cn)
+            If DtDriver.Rows.Count = 0 Then
+                _SQL = "INSERT INTO driver (driver_name, start_work_date, license_id_head, license_id_tail, create_by_user_id,driver_name2, fleet) OUTPUT Inserted.driver_id VALUES (N'" & driver_name & "', '" & start_work_date & "', '" & license_id_head & "', '" & license_id_tail & "', '" & Session("UserId") & "','" & driver_name2 & "','" & fleet & "')"
+                If license_id_head <> Nothing Then
+                    DtJson.Rows.Add(objDB.ExecuteSQLReturnId(_SQL, cn))
+                Else
+                    DtJson.Rows.Add("กรุณากรอกข้อมูลให้ถูกต้อง")
+                End If
             Else
-                DtJson.Rows.Add("กรุณากรอกข้อมูลให้ถูกต้อง")
+                DtJson.Rows.Add("คุณกรอกข้อมูลซ้ำ")
             End If
+
+
+
             'Dim StrTbDriver() As String = {"driver_name", "start_work_date", "license_id_head", "license_id_tail"}
             'Dim TbDriver() As Object = {driver_name, start_work_date, license_id_head, license_id_tail}
             'For n As Integer = 0 To TbDriver.Length - 1
@@ -5528,6 +5538,7 @@ SELECT  DATENAME(month, lf.expire_date) as month_expired,
 #End Region
 
 #End Region
+
 #Region "Driver Profile"
         Function Driver_profile() As ActionResult
             If Session("StatusLogin") = "1" Then
