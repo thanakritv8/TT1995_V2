@@ -320,8 +320,9 @@ $(function () {
         //},
         onCellClick: function (e) {
             var data = [];
-            IsCheckBoxSelect = [];
             if (e.rowType == "header") {
+                //clear check box
+                IsCheckBoxSelect = [];
                 //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
                 setTimeout(function () {
                     data = e.component._options.selectedRowKeys;
@@ -563,6 +564,8 @@ $(function () {
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลเรียบร้อยแล้ว", "success");
+                    //clear check box
+                    IsCheckBoxSelect = [];
                     returnStatus = true;
                 } else {
                     DevExpress.ui.notify("ไม่สามารถแก้ไขข้อมูลได้กรุณาตรวจสอบข้อมูล", "error");

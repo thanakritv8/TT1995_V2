@@ -327,15 +327,17 @@ $(function () {
         onCellClick: function (e) {
             //console.log(e);
             var data = [];
-            IsCheckBoxSelect = [];
+            
             if (e.rowType == "header") {
+                //clear check box
+                IsCheckBoxSelect = [];
                 //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
                 setTimeout(function () {
                     data = e.component._options.selectedRowKeys;
                     data.forEach(function (data) {
                         IsCheckBoxSelect.push(data.tax_id);
                     });
-                    //console.log(IsCheckBoxSelect);
+                    
                 }, 1000); 
                 
             }else if (e.columnIndex === 0 && e.rowType !== "detail") {
@@ -736,7 +738,6 @@ $(function () {
 
     //Function Update ข้อมูลภาษี
     function fnUpdateTax(newData, keyItem) {
-        console.log(IsCheckBoxSelect);
         var boolUpdate = false;
         newData.tax_id = keyItem;
         newData.IdTable = gbTableId;
@@ -755,6 +756,8 @@ $(function () {
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลภาษีเรียบร้อยแล้ว", "success");
+                    //clear check box
+                    IsCheckBoxSelect = [];
                     boolUpdate = true;
                 } else {
                     DevExpress.ui.notify("ไม่สามารถแก้ไขข้อมูลได้กรุณาตรวจสอบข้อมูล", "error");
