@@ -325,7 +325,18 @@ $(function () {
         //    }
         //},
         onCellClick: function (e) {
-            if (e.columnIndex === 0 && e.rowType !== "detail") {
+            var data = [];
+            IsCheckBoxSelect = [];
+            if (e.rowType == "header") {
+                //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
+                setTimeout(function () {
+                    data = e.component._options.selectedRowKeys;
+                    data.forEach(function (data) {
+                        IsCheckBoxSelect.push(data.mi_id);
+                    });
+                }, 1000);
+
+            } else if (e.columnIndex === 0 && e.rowType !== "detail") {
                 if (e.row.isSelected) {
                     IsCheckBoxSelect.push(e.data.mi_id);
                 } else {

@@ -325,7 +325,20 @@ $(function () {
         //},
         
         onCellClick: function (e) {
-            if (e.columnIndex === 0 && e.rowType !== "detail") {
+            //console.log(e);
+            var data = [];
+            IsCheckBoxSelect = [];
+            if (e.rowType == "header") {
+                //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
+                setTimeout(function () {
+                    data = e.component._options.selectedRowKeys;
+                    data.forEach(function (data) {
+                        IsCheckBoxSelect.push(data.tax_id);
+                    });
+                    //console.log(IsCheckBoxSelect);
+                }, 1000); 
+                
+            }else if (e.columnIndex === 0 && e.rowType !== "detail") {
                 if (e.row.isSelected) {
                     IsCheckBoxSelect.push(e.data.tax_id);
                 } else {
@@ -335,8 +348,7 @@ $(function () {
                 dataGrid.expandAll(-1);
                 dataGrid.collapseAll(-1);
                 CurrentId = 0;
-            }
-            else if (e.rowType !== "detail") {
+            } else if (e.rowType !== "detail") {
                 e.component.collapseAll(-1);
                 e.component.expandRow(e.key);
                 CurrentId = e.key;
@@ -724,6 +736,7 @@ $(function () {
 
     //Function Update ข้อมูลภาษี
     function fnUpdateTax(newData, keyItem) {
+        console.log(IsCheckBoxSelect);
         var boolUpdate = false;
         newData.tax_id = keyItem;
         newData.IdTable = gbTableId;
