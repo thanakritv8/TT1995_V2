@@ -26,6 +26,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
+    $("a:contains('ทางด่วน')").last().addClass("active");
     function GetExpresswayData() {
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
         return $.ajax({
@@ -706,6 +707,7 @@ $(function () {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(newData),
             dataType: "json",
+			async: false,
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลรายการจดทะเบียนเรียบร้อยแล้ว", "success");

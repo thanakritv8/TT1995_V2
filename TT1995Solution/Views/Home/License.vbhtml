@@ -4,7 +4,7 @@ End Code
 <style>
     .custom-file {
         overflow-y: auto;
-        min-height: 80px;
+        min-height: 280px;
     }
 
     .dx-toolbar {

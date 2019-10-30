@@ -26,7 +26,7 @@ var OptionsMenu = contextMenuItemsFolder;
 var html_editor;
 
 $(function () {
-    $("a:contains('ประกันภัยสิ่งแวดล้อม')").first().addClass("active");
+    $("a:contains('ประกันภัยสิ่งแวดล้อม')").last().addClass("active");
     $(document).on("dxclick", ".dx-savebutton", function () {
         alert('tests');
     });

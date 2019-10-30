@@ -26,6 +26,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
+    $("a:contains('การผ่อนชำระ')").last().addClass("active");
     function GetInstallmentData() {
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
         return $.ajax({
@@ -704,6 +705,7 @@ $(function () {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(newData),
             dataType: "json",
+			async: false,
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลเรียบร้อยแล้ว", "success");

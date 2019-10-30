@@ -56,9 +56,9 @@ $(function () {
     $("#btnSave").dxButton({
         onClick: function () {
             document.getElementById("btnSave").disabled = true;
-            if ($("#setPosition")[0].checked == true) {
-                fileDataPic.append('position', $("#positionSelect").val());
-            }
+            //if ($("#setPosition")[0].checked == true) {
+            //    fileDataPic.append('position', $("#positionSelect").val());
+            //}
             fnInsertFiles(fileDataPic);
 
         }
@@ -497,6 +497,7 @@ $(function () {
         accept: "image/*,.pdf",
         uploadMode: "useForm",
         onValueChanged: function (e) {
+            console.log(e);
             var files = e.value;
 
             fileDataPic = new FormData();

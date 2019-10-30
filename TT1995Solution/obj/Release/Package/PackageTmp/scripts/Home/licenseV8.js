@@ -34,14 +34,15 @@ $(function () {
         accept: ".pdf",
         uploadMode: "useForm",
         onValueChanged: function (e) {
-            console.log(gbE.currentSelectedRowKeys[0].lv8_id);
+            console.log(gbE);
+            //console.log(gbE.currentSelectedRowKeys[0].lv8_id);
             var files = e.value;
             fileDataPdf = new FormData();
             if (files.length > 0) {
                 $.each(files, function (i, file) {
                     fileDataPdf.append('file', file);
                 });
-                fileDataPdf.append('fk_id', gbE.currentSelectedRowKeys[0].lv8_id);
+                fileDataPdf.append('fk_id', gbE.data.lv8_id);
             }
         },
     }).dxFileUploader('instance');
@@ -194,6 +195,8 @@ $(function () {
                 e.component.expandRow(e.key);
                 CurrentId = e.key;
             }
+            fileOpen = e.data.path;
+            console.log(e);
             gbE = e;
         },
         selection: {
@@ -370,6 +373,7 @@ $(function () {
                     "icon": "exportpdf",
                     "text": "View",
                     onClick: function () {
+                        console.log(fileOpen);
                         if (fileOpen != null) {
                             window.open(fileOpen, '_blank');
                         }

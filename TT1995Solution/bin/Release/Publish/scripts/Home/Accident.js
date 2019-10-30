@@ -26,6 +26,7 @@ var contextMenuItemsFile = [
 var OptionsMenu = contextMenuItemsFolder;
 
 $(function () {
+    $("a:contains('บันทึกอุบัติเหตุ')").last().addClass("active");
     function GetAccidentData() {
         //โชว์ข้อมูลทะเบียนทั้งหมดใน datagrid
         return $.ajax({
