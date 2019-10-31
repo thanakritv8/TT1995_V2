@@ -1,4 +1,5 @@
-﻿Imports System.Data.SqlClient
+﻿
+Imports System.Data.SqlClient
 Imports System.IO
 Imports System.Web.Mvc
 Imports System.Web.Script.Serialization
@@ -521,6 +522,10 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE tax_id = " & tax_id
+            'Group Update
+            If Not tax_status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("tax", tax_status, "tax_status", tax_id, "tax_id", update_group))
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbTax.Length - 1
@@ -528,10 +533,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         GbFn.KeepLog(StrTbTax(n), TbTax(n), "Editing", IdTable, tax_id)
                     End If
                 Next
-                'Group Update
-                If Not tax_status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("tax", tax_status, "tax_status", tax_id, "tax_id", update_group))
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -1269,6 +1271,10 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE lmr_id = " & lmr_id
+            'Group Update
+            If Not lmr_status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("license_mekong_river", lmr_status, "lmr_status", lmr_id, "lmr_id", update_group))
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbLc.Length - 1
@@ -1276,10 +1282,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         GbFn.KeepLog(StrTbLc(n), TbLc(n), "Editing", IdTable, lmr_id)
                     End If
                 Next
-                'Group Update
-                If Not lmr_status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("license_mekong_river", lmr_status, "lmr_status", lmr_id, "lmr_id", update_group))
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -2374,6 +2377,10 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
 
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE lv8_id = " & lv8_id
+            'Group Update
+            If Not lv8_status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("license_v8", lv8_status, "lv8_status", lv8_id, "lv8_id", update_group))
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbLc.Length - 1
@@ -2381,10 +2388,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         GbFn.KeepLog(StrTbLc(n), TbLc(n), "Editing", IdTable, lv8_id)
                     End If
                 Next
-                'Group Update
-                If Not lv8_status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("license_v8", lv8_status, "lv8_status", lv8_id, "lv8_id", update_group))
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -2605,6 +2609,12 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE mi_id = " & key
+            'Group Update
+            If Not status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("main_insurance", status, "status", key, "mi_id", update_group))
+            Else
+                DtJson.Rows.Add("1")
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 'DtJson.Rows.Add("1")
                 For n As Integer = 0 To TbMI.Length - 1
@@ -2612,12 +2622,7 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                         GbFn.KeepLog(StrTbMI(n), TbMI(n), "Editing", IdTable, key)
                     End If
                 Next
-                'Group Update
-                If Not status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("main_insurance", status, "status", key, "mi_id", update_group))
-                Else
-                    DtJson.Rows.Add("1")
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -2719,18 +2724,19 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE dpi_id = " & key
+            'Group Update
+            If Not status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("domestic_product_insurance", status, "status", key, "dpi_id", update_group))
+            Else
+                DtJson.Rows.Add("1")
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 For n As Integer = 0 To TbDPI.Length - 1
                     If Not TbDPI(n) Is Nothing Then
                         GbFn.KeepLog(StrTbDPI(n), TbDPI(n), "Editing", IdTable, key)
                     End If
                 Next
-                'Group Update
-                If Not status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("domestic_product_insurance", status, "status", key, "dpi_id", update_group))
-                Else
-                    DtJson.Rows.Add("1")
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
@@ -2849,18 +2855,19 @@ SELECT N'ใบอนุญาต(วอ.8)' as kind, lv8_number as name_file, [
                 End If
             Next
             _SQL &= "update_date = GETDATE(), update_by_user_id = " & Session("UserId") & " WHERE ai_id = " & key
+            'Group Update
+            If Not status Is Nothing And Not update_group Is Nothing Then
+                DtJson.Rows.Add(group_update("act_insurance", status, "status", key, "ai_id", update_group))
+            Else
+                DtJson.Rows.Add("1")
+            End If
             If objDB.ExecuteSQL(_SQL, cn) Then
                 For n As Integer = 0 To TbAI.Length - 1
                     If Not TbAI(n) Is Nothing Then
                         GbFn.KeepLog(StrTbAI(n), TbAI(n), "Editing", IdTable, key)
                     End If
                 Next
-                'Group Update
-                If Not status Is Nothing And Not update_group Is Nothing Then
-                    DtJson.Rows.Add(group_update("act_insurance", status, "status", key, "ai_id", update_group))
-                Else
-                    DtJson.Rows.Add("1")
-                End If
+
             Else
                 DtJson.Rows.Add("0")
             End If
