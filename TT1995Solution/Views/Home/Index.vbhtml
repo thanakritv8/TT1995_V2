@@ -55,49 +55,49 @@ End Code
                 <% if(p1 != '' && p1 != null){ %>
                 <p>
                     <b>รูปด้านหน้า : </b>
-                    <a href="<%= p1%>" target="_blank"><%= n1%></a>
+                    <a href='<%= p1.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n1%></a>
                 </p>
                 <% } %>
                 <% if(p2 != '' && p2 != null){ %>
                 <p>
                     <b>รูปด้านหลัง : </b>
-                    <a href="<%= p2%>" target="_blank"><%= n2%></a>
+                    <a href='<%= p2.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n2%></a>
                 </p>
                 <% } %>
                 <% if(p3 != '' && p3 != null){ %>
                 <p>
                     <b>รูปด้านข้างซ้าย : </b>
-                    <a href="<%= p3%>" target="_blank"><%= n3%></a>
+                    <a href='<%= p3.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n3%></a>
                 </p>
                 <% } %>
                 <% if(p4 != '' && p4 != null){ %>
                 <p>
                     <b>รูปด้านข้างขวา : </b>
-                    <a href="<%= p4%>" target="_blank"><%= n4%></a>
+                    <a href='<%= p4.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n4%></a>
                 </p>
                 <% } %>
                 <% if(p5 != '' && p5 != null){ %>
                 <p>
                     <b>รูปด้านหน้าข้างขวา : </b>
-                    <a href="<%= p5%>" target="_blank"><%= n5%></a>
+                    <a href='<%= p5.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n5%></a>
                 </p>
                 <% } %>
                 <% if(p6 != '' && p6 != null){ %>
                 <p>
                     <b>รูปด้านหน้าข้างซ้าย : </b>
-                    <a href="<%= p6%>" target="_blank"><%= n6%></a>
+                    <a href='<%= p6.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n6%></a>
                 </p>
                 <% } %>
                 <% if(p7 != '' && p7 != null){ %>
                 <p>
                     <b>รูปด้านหลังข้างขวา : </b>
-                    <a href="<%= p7%>" target="_blank"><%= n7%></a>
+                    <a href='<%= p7.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n7%></a>
                 </p>
                 <% } %>
                 <% if(p8 != '' && p8 != null){ %>
                 <p>
                     <b>รูปด้านหลังข้างซ้าย : </b>
-                    <a href="<%= p8%>" target="_blank"><%= n8%></a>
+                    <a href='<%= p8.replace("C:\\inetpub\\wwwroot", "http://tabien.threetrans.com") %>' target="_blank"><%= n8%></a>
                 </p>
                 <% } %>
 

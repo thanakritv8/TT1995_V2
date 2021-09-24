@@ -179,7 +179,19 @@ $(function () {
         //},
         onCellClick: function (e) {
             
-            if (e.columnIndex === 0 && e.rowType !== "detail") {
+            var data = [];
+            if (e.rowType == "header") {
+                //clear check box
+                IsCheckBoxSelect = [];
+                //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
+                setTimeout(function () {
+                    data = e.component._options.selectedRowKeys;
+                    data.forEach(function (data) {
+                        IsCheckBoxSelect.push(data.lv8_id);
+                    });
+                }, 1000);
+
+            } else if (e.columnIndex === 0 && e.rowType !== "detail") {
                 if (e.row.isSelected) {
                     IsCheckBoxSelect.push(e.data.lv8_id);
                 } else {
@@ -195,6 +207,7 @@ $(function () {
                 e.component.expandRow(e.key);
                 CurrentId = e.key;
             }
+            console.log(IsCheckBoxSelect);
             fileOpen = e.data.path;
             console.log(e);
             gbE = e;
@@ -558,6 +571,8 @@ $(function () {
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลใบอนุญาติเรียบร้อยแล้ว", "success");
+                    //clear check box
+                    IsCheckBoxSelect = [];
                     boolUpdate = true;
                 } else {
                     DevExpress.ui.notify("ไม่สามารถแก้ไขข้อมูลได้กรุณาตรวจสอบข้อมูล", "error");

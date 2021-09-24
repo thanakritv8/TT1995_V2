@@ -370,7 +370,19 @@ $(function () {
         //    }
         //},
         onCellClick: function (e) {
-            if (e.columnIndex === 0 && e.rowType !== "detail") {
+            var data = [];
+            if (e.rowType == "header") {
+                //clear check box
+                IsCheckBoxSelect = [];
+                //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
+                setTimeout(function () {
+                    data = e.component._options.selectedRowKeys;
+                    data.forEach(function (data) {
+                        IsCheckBoxSelect.push(data.dpi_id);
+                    });
+                }, 1000);
+
+            } else if (e.columnIndex === 0 && e.rowType !== "detail") {
                 
                 if (e.row.isSelected) {
                     IsCheckBoxSelect.push(e.data.dpi_id);
@@ -657,6 +669,8 @@ $(function () {
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลเรียบร้อยแล้ว", "success");
+                    //clear check box
+                    IsCheckBoxSelect = [];
                     returnStatus = true;
                 } else {
                     DevExpress.ui.notify("ไม่สามารถแก้ไขข้อมูลได้กรุณาตรวจสอบข้อมูล", "error");

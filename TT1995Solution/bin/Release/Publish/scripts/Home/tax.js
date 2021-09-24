@@ -325,7 +325,22 @@ $(function () {
         //},
         
         onCellClick: function (e) {
-            if (e.columnIndex === 0 && e.rowType !== "detail") {
+            //console.log(e);
+            var data = [];
+            
+            if (e.rowType == "header") {
+                //clear check box
+                IsCheckBoxSelect = [];
+                //ที่เอา setTimeout เพราะว่า e.component._options.selectedRowKeys รับค่าตรงๆไม่ได้ เหมือนกะว่ามันยังเซ็ตค่าไม่ทัน 
+                setTimeout(function () {
+                    data = e.component._options.selectedRowKeys;
+                    data.forEach(function (data) {
+                        IsCheckBoxSelect.push(data.tax_id);
+                    });
+                    
+                }, 1000); 
+                
+            }else if (e.columnIndex === 0 && e.rowType !== "detail") {
                 if (e.row.isSelected) {
                     IsCheckBoxSelect.push(e.data.tax_id);
                 } else {
@@ -335,8 +350,7 @@ $(function () {
                 dataGrid.expandAll(-1);
                 dataGrid.collapseAll(-1);
                 CurrentId = 0;
-            }
-            else if (e.rowType !== "detail") {
+            } else if (e.rowType !== "detail") {
                 e.component.collapseAll(-1);
                 e.component.expandRow(e.key);
                 CurrentId = e.key;
@@ -742,6 +756,8 @@ $(function () {
             success: function (data) {
                 if (data[0].Status == 1) {
                     DevExpress.ui.notify("แก้ไขข้อมูลภาษีเรียบร้อยแล้ว", "success");
+                    //clear check box
+                    IsCheckBoxSelect = [];
                     boolUpdate = true;
                 } else {
                     DevExpress.ui.notify("ไม่สามารถแก้ไขข้อมูลได้กรุณาตรวจสอบข้อมูล", "error");

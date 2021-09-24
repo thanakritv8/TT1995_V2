@@ -162,10 +162,11 @@ $(function () {
                         text: "Save",
                         onClick: function (e) {
                             //alert(statusUpdateProtection);
-                            //console.log(gbE);
+                            console.log(gbE);
+                            console.log(statusUpdateInstallationList);
                             ////console.log(gbE);
                             ////console.log(dataGrid);
-                            if (typeof gbE != "undefined") {
+                            if (typeof gbE != "undefined" && typeof gbE.data != "undefined") {
                                 if (statusUpdateInstallationList == 2) {
                                     updateInstallation_list(gbE.data.gps_car_id, html_editor.option("value"));
                                     gbE.data.Installation_list = html_editor.option("value");
@@ -204,6 +205,7 @@ $(function () {
             dataGrid.option('columns[0].allowEditing', false);
             statusUpdateInstallationList = 0;
             gbE = e;
+            console.log(e);
         }, onEditorPrepared: function (e) {
             if (typeof html_editor != "undefined" && typeof e.row != "undefined") {
                 //console.log(e.row.key.protection);
@@ -343,6 +345,7 @@ $(function () {
             }
         },
         onSelectionChanged: function (e) {
+            console.log(e);
             e.component.collapseAll(-1);
             e.component.expandRow(e.currentSelectedRowKeys[0]);
             gbE = e;
@@ -862,8 +865,15 @@ $(function () {
     //Function Insert ข้อมูล Gps_car
     function fnInsertGps_car(dataGrid, Installation_list) {
         dataGrid.IdTable = gbTableId;
-        dataGrid.Installation_list = Installation_list;
+        console.log(dataGrid);
+        console.log(Installation_list);
+        if (typeof Installation_list != "undefined") {
+            dataGrid.Installation_list = Installation_list;
+        } else {
+            dataGrid.Installation_list = "";
+        }
         var returnId = 0;
+        console.log(dataGrid);
         $.ajax({
             type: "POST",
             url: "../Home/InsertGps_car",

@@ -7,7 +7,7 @@ End Code
         height: 100%;
     }
 </style>
-<div class="header">GPS Car - GRP ติดรถ</div>
+<div class="header">GPS Car - GPS ติดรถ</div>
 <div class="container-fluid">
     <div class="wrapper-data">
         <div class="mt-3 mb-3" id="gridContainer"></div>
